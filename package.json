@@ -1,6 +1,6 @@
 {
   "name": "swordfight-cli",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Command-line interface for the SwordFight multiplayer game",
   "keywords": [
     "cli",
