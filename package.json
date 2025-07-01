@@ -48,10 +48,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/swordfight-cli.git"
+    "url": "https://github.com/mwdelaney/swordfight-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/swordfight-cli/issues"
+    "url": "https://github.com/mwdelaney/swordfight-cli/issues"
   },
   "homepage": "https://swordfight.me"
 }

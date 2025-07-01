@@ -47,9 +47,18 @@ jobs:
             echo "Version $CURRENT_VERSION is new"
           fi
 
+      - name: Check package availability
+        run: |
+          # Check if we can access the package
+          npm view swordfight-cli --json || echo "Package may not exist or no access"
+          
       - name: Publish to NPM
         if: steps.version-check.outputs.version_exists == 'false'
-        run: npm publish --provenance
+        run: |
+          echo "Publishing swordfight-cli@${{ steps.version-check.outputs.current_version }}"
+          npm whoami
+          npm publish --provenance --access public --dry-run
+          npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

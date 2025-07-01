@@ -22,16 +22,16 @@ export default [
       }
     },
     rules: {
-      'no-unused-vars': ['error', { 
+      'no-unused-vars': ['error', {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_'
       }],
       'no-console': 'off',
-      'indent': ['error', 2, { 
+      'indent': ['error', 2, {
         SwitchCase: 1,
         ignoredNodes: ['TemplateLiteral']
       }],
-      'quotes': ['error', 'single', { 
+      'quotes': ['error', 'single', {
         allowTemplateLiterals: true,
         avoidEscape: true
       }],
