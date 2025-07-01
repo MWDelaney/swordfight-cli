@@ -133,9 +133,9 @@ npm run release:major
 
 - Version number is incremented and committed
 - Git tag is created and pushed
-- GitHub workflow builds the package
-- Package is published to npm (if version is new)
-- GitHub release is created with assets
+- GitHub workflow runs comprehensive tests (ESLint + all test suites)
+- Only if tests pass: Package is built and published to npm
+- GitHub release is created with built assets
 
 #### Required Secrets
 
