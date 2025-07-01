@@ -1,0 +1,21 @@
+# Source files (not needed in published package)
+bin/
+lib/
+scripts/
+
+# Development files
+.gitignore
+.npmignore
+
+# Node modules (never include)
+node_modules/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

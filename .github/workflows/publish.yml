@@ -1,0 +1,114 @@
+name: Publish to NPM and GitHub Releases
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Check if version changed
+        id: version-check
+        run: |
+          # Get the current version from package.json
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+          # Check if this version exists on npm
+          if npm view swordfight-cli@$CURRENT_VERSION version > /dev/null 2>&1; then
+            echo "version_exists=true" >> $GITHUB_OUTPUT
+            echo "Version $CURRENT_VERSION already exists on npm"
+          else
+            echo "version_exists=false" >> $GITHUB_OUTPUT
+            echo "Version $CURRENT_VERSION is new"
+          fi
+
+      - name: Publish to NPM
+        if: steps.version-check.outputs.version_exists == 'false'
+        run: npm publish --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        if: steps.version-check.outputs.version_exists == 'false'
+        id: create-release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version-check.outputs.current_version }}
+          name: Release v${{ steps.version-check.outputs.current_version }}
+          body: |
+            ## Changes in v${{ steps.version-check.outputs.current_version }}
+
+            🎮 **SwordFight CLI** - Command-line sword fighting game
+
+            ### Installation
+            ```bash
+            npx --yes swordfight-cli
+            ```
+
+            Or install globally:
+            ```bash
+            npm install -g swordfight-cli
+            swordfight
+            ```
+
+            ### What's New
+            - Check the commit history for detailed changes
+            - Bug fixes and improvements
+
+            ### System Requirements
+            - Node.js >= 18.0.0
+
+            ---
+            **Full Changelog**: https://github.com/${{ github.repository }}/commits/main
+          draft: false
+          prerelease: false
+          files: |
+            dist/swordfight.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Additional Assets
+        if: steps.version-check.outputs.version_exists == 'false'
+        run: |
+          echo "✅ Release created with built assets"
+
+  notification:
+    needs: publish
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Notify Success
+        if: needs.publish.result == 'success'
+        run: |
+          echo "✅ Successfully published swordfight-cli to NPM and created GitHub release!"
+
+      - name: Notify Failure
+        if: needs.publish.result == 'failure'
+        run: |
+          echo "❌ Failed to publish swordfight-cli"
+          exit 1
