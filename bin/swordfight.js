@@ -33,6 +33,13 @@ const __dirname = path.dirname(__filename);
 // Setup DOM environment
 setupDOMEnvironment();
 
+// Verify crypto is available
+if (typeof global.crypto === 'undefined') {
+  console.error('❌ Crypto API not available. This may be due to Node.js version compatibility.');
+  console.error('   Please ensure you are running Node.js 18.0.0 or higher.');
+  process.exit(1);
+}
+
 // Create character manager instance using the bundled engine
 const characterManager = new Game.CharacterManager();
 
@@ -234,6 +241,9 @@ class CLIFrontend {
 // Error handling
 process.on('unhandledRejection', (reason, _promise) => {
   console.error('Unhandled Promise Rejection:', reason);
+  if (reason?.message?.includes('crypto')) {
+    console.error('This appears to be a crypto-related error. Please ensure Node.js 18+ is being used.');
+  }
   process.exit(1);
 });
 

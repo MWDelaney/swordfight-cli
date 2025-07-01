@@ -18,7 +18,8 @@ export default [
         setInterval: 'readonly',
         clearInterval: 'readonly',
         document: 'readonly',
-        localStorage: 'readonly'
+        localStorage: 'readonly',
+        crypto: 'readonly'
       }
     },
     rules: {
