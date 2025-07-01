@@ -7,7 +7,6 @@
 
 import { spawn } from 'child_process';
 import fs from 'fs';
-import path from 'path';
 
 let testsPassed = 0;
 let testsFailed = 0;

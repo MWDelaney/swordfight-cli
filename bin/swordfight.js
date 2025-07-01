@@ -232,7 +232,7 @@ class CLIFrontend {
 }
 
 // Error handling
-process.on('unhandledRejection', (reason, promise) => {
+process.on('unhandledRejection', (reason, _promise) => {
   console.error('Unhandled Promise Rejection:', reason);
   process.exit(1);
 });

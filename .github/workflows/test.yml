@@ -1,4 +1,4 @@
-name: Character Validation Tests
+name: CLI Game Tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main, master ]
 
 jobs:
-  validate-characters:
+  test-cli-functionality:
     runs-on: ubuntu-latest
 
     strategy:
@@ -27,11 +27,17 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Run All Character Validation Tests
+    - name: Build package
+      run: npm run build
+
+    - name: Run All CLI Tests
       run: npm test
 
-    - name: Test CLI Functionality
-      run: npm run test:cli
+    - name: Test CLI Complete Game Functionality
+      run: npm run test:complete-game
+
+    - name: Run All Tests
+      run: npm run test:all
 
   lint-and-format:
     runs-on: ubuntu-latest
@@ -50,14 +56,12 @@ jobs:
       run: npm ci
 
     - name: Run ESLint
-      run: npm run lint || echo "Linting completed with warnings"
-      continue-on-error: true
+      run: npm run lint
 
-    - name: Validate JSON files
+    - name: Verify package integrity
       run: |
-        echo "Validating character JSON files..."
-        for file in src/assets/scripts/characters/*.json; do
-          echo "Checking $file"
-          node -e "JSON.parse(require('fs').readFileSync('$file', 'utf8'))" || exit 1
-        done
-        echo "All JSON files are valid"
+        echo "Verifying package structure..."
+        test -f "package.json" || (echo "❌ package.json missing" && exit 1)
+        test -f "bin/swordfight.js" || (echo "❌ bin/swordfight.js missing" && exit 1)
+        test -d "lib" || (echo "❌ lib directory missing" && exit 1)
+        echo "✅ Package structure verified"

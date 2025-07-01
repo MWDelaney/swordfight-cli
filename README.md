@@ -74,12 +74,24 @@ The game features:
 npm run build
 ```
 
+### Code Quality
+
+Check code quality with ESLint:
+
+```bash
+# Run ESLint to check for issues
+npm run lint
+
+# Auto-fix ESLint issues where possible
+npm run lint:fix
+```
+
 ### Testing
 
 Run the comprehensive test suite:
 
 ```bash
-# Run all tests (CLI tests + complete game playthrough)
+# Run all tests (ESLint + CLI tests + complete game playthrough)
 npm run test:all
 
 # Run only the main test suite
@@ -91,6 +103,7 @@ npm run test:complete-game
 
 **Test Coverage:**
 
+- ✅ ESLint code quality and style checks
 - ✅ File integrity and build verification
 - ✅ CLI startup and interface tests
 - ✅ Character selection automation

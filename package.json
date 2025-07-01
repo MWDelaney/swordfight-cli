@@ -28,7 +28,9 @@
     "start": "node bin/swordfight.js",
     "test": "node scripts/test.js",
     "test:complete-game": "node scripts/test-complete-game.js",
-    "test:all": "npm run test && npm run test:complete-game",
+    "test:all": "npm run lint && npm run test && npm run test:complete-game",
+    "lint": "eslint bin lib scripts --ext .js",
+    "lint:fix": "eslint bin lib scripts --ext .js --fix",
     "release": "npm version patch && git push origin main --tags",
     "release:minor": "npm version minor && git push origin main --tags",
     "release:major": "npm version major && git push origin main --tags"
@@ -37,7 +39,9 @@
     "swordfight-engine": "^1.0.0"
   },
   "devDependencies": {
-    "esbuild": "^0.19.12"
+    "@eslint/js": "^9.30.1",
+    "esbuild": "^0.19.12",
+    "eslint": "^9.30.1"
   },
   "engines": {
     "node": ">=18.0.0"

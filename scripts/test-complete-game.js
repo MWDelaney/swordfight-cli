@@ -9,19 +9,19 @@ import { spawn } from 'child_process';
 
 async function testCompleteGame() {
   console.log('🎮 Testing complete game playthrough...\n');
-  
+
   return new Promise((resolve, reject) => {
     const child = spawn('node', ['dist/swordfight.js'], { stdio: 'pipe' });
     let output = '';
     let roundCount = 0;
     let gameComplete = false;
-    let lastOutput = '';
-    
+    let _lastOutput = '';
+
     child.stdout.on('data', (data) => {
       const chunk = data.toString();
       output += chunk;
-      lastOutput = chunk;
-      
+      _lastOutput = chunk;
+
       // Log interesting events
       if (chunk.includes('Character selected:')) {
         console.log('✅ Character selection completed');
@@ -33,14 +33,14 @@ async function testCompleteGame() {
         roundCount++;
         console.log(`🗡️  Round ${roundCount} completed`);
       }
-      
+
       // Handle player name input
       if (chunk.includes('Enter your warrior name:')) {
         setTimeout(() => {
           child.stdin.write('AutoTestBot\n');
         }, 100);
       }
-      
+
       // Handle character selection
       if (chunk.includes('CHOOSE YOUR FIGHTER') && !output.includes('Character selected:')) {
         setTimeout(() => {
@@ -49,13 +49,13 @@ async function testCompleteGame() {
           child.stdin.write(randomChar.toString() + '\n');
         }, 100);
       }
-      
+
       // Handle move selection
-      if (chunk.includes('Press Enter to see available moves') || 
+      if (chunk.includes('Press Enter to see available moves') ||
           chunk.includes('Press Enter to select your next move')) {
         setTimeout(() => {
           child.stdin.write('\n'); // Press Enter to see moves
-          
+
           setTimeout(() => {
             const randomMove = Math.floor(Math.random() * 7) + 1;
             console.log(`🎯 Selecting move ${randomMove}`);
@@ -63,10 +63,10 @@ async function testCompleteGame() {
           }, 200);
         }, 100);
       }
-      
+
       // Check for game completion
-      if (chunk.includes('GAME OVER') || 
-          chunk.includes('VICTORY') || 
+      if (chunk.includes('GAME OVER') ||
+          chunk.includes('VICTORY') ||
           chunk.includes('DEFEAT') ||
           chunk.includes('has won') ||
           chunk.includes('You win') ||
@@ -77,10 +77,10 @@ async function testCompleteGame() {
           child.kill('SIGTERM');
         }, 500);
       }
-      
+
       // Safety: Kill if too many rounds
-      if (roundCount > 15) {
-        console.log('⏰ Stopping after 15 rounds (safety limit)');
+      if (roundCount > 35) {
+        console.log('⏰ Stopping after 35 rounds (safety limit)');
         child.kill('SIGTERM');
       }
     });
@@ -101,7 +101,7 @@ async function testCompleteGame() {
       console.log(`   Rounds played: ${roundCount}`);
       console.log(`   Game completed naturally: ${gameComplete ? 'Yes' : 'No'}`);
       console.log(`   Exit code: ${code}`);
-      
+
       if (roundCount > 0) {
         console.log('✅ SUCCESS: Game mechanics are working!');
         resolve(true);
@@ -125,5 +125,3 @@ testCompleteGame().then(success => {
   console.error('Test failed:', error);
   process.exit(1);
 });
-
-
