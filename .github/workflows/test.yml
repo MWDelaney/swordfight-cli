@@ -3,6 +3,7 @@ name: CLI Game Tests
 on:
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   test-cli-functionality:
