@@ -1,6 +1,6 @@
 {
   "name": "swordfight-cli",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Command-line interface for the SwordFight multiplayer game",
   "keywords": [
     "cli",
@@ -28,7 +28,9 @@
     "start": "node bin/swordfight.js",
     "test": "node scripts/test.js",
     "test:complete-game": "node scripts/test-complete-game.js",
-    "test:all": "npm run lint && npm run test && npm run test:complete-game",
+    "test:simple-peer": "node scripts/test-simple-two-peer.js",
+    "test:polyfills": "node scripts/test-polyfills.js",
+    "test:all": "npm run lint && npm run test && npm run test:complete-game && npm run test:simple-peer && npm run test:polyfills",
     "lint": "eslint bin lib scripts --ext .js",
     "lint:fix": "eslint bin lib scripts --ext .js --fix",
     "release": "npm version patch && git push origin main --tags",
@@ -36,7 +38,9 @@
     "release:major": "npm version major && git push origin main --tags"
   },
   "dependencies": {
-    "swordfight-engine": "^1.0.1"
+    "node-datachannel": "^0.28.0",
+    "swordfight-engine": "^1.0.1",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

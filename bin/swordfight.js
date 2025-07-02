@@ -13,15 +13,17 @@ import path from 'path';
 import { setupDOMEnvironment, CustomEvent } from '../lib/utils/domEnvironment.js';
 import { TerminalInput } from '../lib/utils/terminalInput.js';
 import { createBox } from '../lib/utils/boxDrawing.js';
-import { bold, cyan, dim, green, red } from '../lib/utils/colors.js';
+import { bold, cyan, dim, green, red, yellow } from '../lib/utils/colors.js';
 
 // Import display classes
 import { GameDisplay } from '../lib/display/gameDisplay.js';
 import { MoveSelector } from '../lib/display/moveSelector.js';
 import { CharacterSelector } from '../lib/display/characterSelector.js';
+import { ModeSelector } from '../lib/display/modeSelector.js';
 
 // Import game classes
 import { GameEventHandler } from '../lib/game/gameEventHandler.js';
+import { MultiplayerHandler } from '../lib/multiplayer/multiplayerHandler.js';
 
 // Import the game engine
 import Game from 'swordfight-engine';
@@ -59,7 +61,9 @@ class CLIFrontend {
     this.gameDisplay = new GameDisplay();
     this.moveSelector = new MoveSelector(this.gameDisplay);
     this.characterSelector = new CharacterSelector(this.gameDisplay);
+    this.modeSelector = new ModeSelector(this.gameDisplay);
     this.eventHandler = new GameEventHandler(this);
+    this.multiplayerHandler = new MultiplayerHandler(this);
 
     // Game state
     this.game = null;
@@ -69,6 +73,7 @@ class CLIFrontend {
     this.waitingForMove = false;
     this.lastRoundData = null;
     this.lastOpponentsRoundData = null;
+    this.gameMode = null; // 'single' or 'multiplayer'
 
     // Setup event listeners
     this.eventHandler.setupEventListeners();
@@ -84,7 +89,8 @@ class CLIFrontend {
       this.showWelcome();
       await this.loadCharacters();
       await this.setupPlayer();
-      this.startGame();
+      await this.selectGameMode();
+      await this.startGame();
     } catch (error) {
       console.error(red('✗ Failed to start game:'), error.message);
       this.exit();
@@ -143,9 +149,20 @@ class CLIFrontend {
   }
 
   /**
-   * Initializes and starts the game with selected character against computer opponent
+   * Initializes and starts the game based on the selected mode
    */
-  startGame() {
+  async startGame() {
+    if (this.gameMode === 'multiplayer') {
+      // For multiplayer, the game instance is already created by multiplayerHandler
+      // and we wait for the "start" event to proceed
+      console.log(createBox('MULTIPLAYER BATTLE', 'Waiting for connection...'));
+      console.log('');
+
+      // The "start" event handler will take care of the rest
+      return;
+    }
+
+    // Single player mode
     console.log(createBox('BATTLE BEGINS', 'Preparing for combat against computer opponent...'));
     console.log('');
 
@@ -169,6 +186,9 @@ class CLIFrontend {
 
     // Create game instance with unique ID and computer opponent
     this.game = new Game('cli-game-' + Date.now(), 'computer', gameOptions);
+
+    // Single player games start immediately
+    this.game.setUp();
   }
 
   /**
@@ -176,6 +196,12 @@ class CLIFrontend {
    * @returns {Promise<void>}
    */
   async promptForMovesDisplay() {
+    // Prevent multiple simultaneous move prompts
+    if (this.waitingForMove) {
+      console.log(dim('[SKIP] Already waiting for move selection...'));
+      return;
+    }
+    
     console.log(dim('Press Enter to see available moves...'));
     await this.terminalInput.waitForEnter();
     console.log('');
@@ -187,6 +213,12 @@ class CLIFrontend {
    * @returns {Promise<void>}
    */
   async showAvailableMoves() {
+    // Prevent multiple simultaneous move selections
+    if (this.waitingForMove) {
+      console.log(dim('[SKIP] Already waiting for move selection...'));
+      return;
+    }
+    
     if (!this.game || !this.game.Moves) {
       console.log(red('❌ No moves available!'));
       return;
@@ -233,10 +265,115 @@ class CLIFrontend {
    * Exits the application gracefully by closing input handlers and terminating process
    */
   exit() {
+    // Cleanup multiplayer connection if active
+    if (this.multiplayerHandler) {
+      this.multiplayerHandler.disconnect();
+    }
+
     this.terminalInput.close();
     process.exit(0);
   }
+
+  /**
+   * Handles game mode selection - single player vs computer or multiplayer
+   * @returns {Promise<void>}
+   */
+  async selectGameMode() {
+    // Check for command line arguments for direct room joining
+    const args = process.argv.slice(2);
+    const joinIndex = args.indexOf('--join');
+    if (joinIndex !== -1 && args[joinIndex + 1]) {
+      const roomId = args[joinIndex + 1];
+      this.gameMode = 'multiplayer';
+      console.log(cyan(`🌐 Joining room: ${bold(roomId)}`));
+      await this.joinMultiplayerGame(roomId);
+      return;
+    }
+
+    // Use interactive mode selector
+    const selectedMode = await this.modeSelector.selectMode();
+
+    switch (selectedMode) {
+      case 'single':
+        this.gameMode = 'single';
+        break;
+      case 'multiplayer':
+        this.gameMode = 'multiplayer';
+        await this.createMultiplayerGame();
+        break;
+      case 'join':
+        this.gameMode = 'multiplayer';
+        await this.joinMultiplayerGame();
+        break;
+    }
+  }
+
+  /**
+   * Creates a new multiplayer game room and waits for peer connections
+   * @returns {Promise<void>}
+   */
+  async createMultiplayerGame() {
+    try {
+      const roomId = await this.multiplayerHandler.createRoom(
+        this.playerName,
+        localStorage.getItem('myCharacterSlug')
+      );
+
+      console.log('');
+      console.log(createBox('MULTIPLAYER ROOM CREATED', `Room ID: ${roomId}`));
+      console.log('');
+      console.log(yellow('💡 Your opponent can join using:'));
+      console.log(dim(`   swordfight --join ${roomId}`));
+      console.log('');
+
+      // Game instance is already created and waiting for peer connections
+      // The engine will handle everything from here
+
+    } catch (error) {
+      console.error(red('❌ Failed to create multiplayer game:'), error.message);
+      console.log(yellow('Falling back to single player mode...'));
+      this.gameMode = 'single';
+    }
+  }
+
+  /**
+   * Joins an existing multiplayer game room and connects to peer
+   * @param {string} roomId - Optional room ID from command line
+   * @returns {Promise<void>}
+   */
+  async joinMultiplayerGame(roomId) {
+    try {
+      if (!roomId) {
+        roomId = await this.terminalInput.question(cyan('Enter room ID: '));
+      }
+
+      if (!roomId.trim()) {
+        throw new Error('Room ID is required');
+      }
+
+      await this.multiplayerHandler.joinRoom(
+        roomId.trim(),
+        this.playerName,
+        localStorage.getItem('myCharacterSlug')
+      );
+
+      console.log('');
+      console.log(green('✓ Joining room and attempting peer connection!'));
+      console.log('');
+
+      // Game instance is already created and trying to connect to the room
+      // The engine will handle everything from here
+
+    } catch (error) {
+      console.error(red('❌ Failed to join multiplayer game:'), error.message);
+      console.log(yellow('Falling back to single player mode...'));
+      this.gameMode = 'single';
+    }
+  }
 }
+
+// Export the CLIFrontend class for testing
+export { CLIFrontend };
 
 // Error handling
 process.on('unhandledRejection', (reason, _promise) => {

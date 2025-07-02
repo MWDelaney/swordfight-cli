@@ -1,6 +1,6 @@
 # SwordFight CLI
 
-A command-line interface for the SwordFight multiplayer sword fighting game.
+A command-line interface for the SwordFight multiplayer sword fighting game with both single-player and real-time multiplayer support.
 
 ## Installation
 
@@ -24,25 +24,53 @@ npx -y swordfight-cli
 
 ## Usage
 
+### Single Player Mode
+
 Simply run the command to start playing:
 
 ```bash
 swordfight
 ```
 
+### Multiplayer Mode
+
+**Creating a Multiplayer Room:**
+
+1. Run `swordfight`
+2. Select "Create Multiplayer Room" from the game mode menu
+3. Share the generated room ID with your friend
+4. Wait for them to join and start battling!
+
+**Joining a Multiplayer Room:**
+
+1. Run `swordfight`
+2. Select "Join Multiplayer Room" and enter the room ID
+3. Or use the direct join command:
+
+   ```bash
+   swordfight --join ROOM_ID
+   ```
+
 The CLI will guide you through:
 
 1. Setting your warrior name
 2. Choosing your fighter character
-3. Engaging in turn-based combat against a computer opponent
+3. Selecting game mode (Single Player or Multiplayer)
+4. Engaging in turn-based combat
 
 ## Features
 
 - ⚔️ Multiple character types with unique abilities
 - 🎯 Interactive move selection with arrow keys
-- 🤖 Intelligent computer opponent
+- 🤖 Intelligent computer opponent (single player)
+- 🌐 Real-time multiplayer via WebRTC
 - 📊 Real-time health and status tracking
 - 🎨 Colorful terminal interface with box drawing
+- 🚪 Easy room joining with command-line arguments
+
+## Multiplayer Technology
+
+The multiplayer functionality uses [trystero](https://github.com/dmotz/trystero) for WebRTC-based peer-to-peer connections, ensuring low-latency real-time gameplay without requiring a central server.
 
 ## Requirements
 
