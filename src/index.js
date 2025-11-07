@@ -423,6 +423,23 @@ global.localStorage = {
 /** @global window - Minimal window object for game compatibility */
 global.window = { logging: false };
 
+// Suppress debug output from the game engine
+const originalConsoleLog = console.log;
+const suppressedPatterns = [
+  /^Applied \d+ damage to .+\. New health: \d+$/,
+  /^.+ takes \d+ damage$/,
+  /^.+ health: \d+$/
+];
+
+console.log = function(...args) {
+  const message = args.join(' ');
+  const shouldSuppress = suppressedPatterns.some(pattern => pattern.test(message));
+  
+  if (!shouldSuppress) {
+    originalConsoleLog.apply(console, args);
+  }
+};
+
 /** @global CustomEvent - Polyfilled CustomEvent constructor */
 global.CustomEvent = class CustomEvent {
   constructor(type, options = {}) {
@@ -756,8 +773,8 @@ async function startGame() {
     adapter.addEventListener('round', async(e) => {
       const { myRoundData, opponentsRoundData } = e.detail;
       isProcessingRound = true;
-      // Store bonuses the opponent gave us for next round (not the ones we gave them!)
-      currentBonus = opponentsRoundData.nextRoundBonus || [];
+      // Store bonuses the player earned for next round
+      currentBonus = myRoundData.nextRoundBonus || [];
       await displayRoundResult(myRoundData, opponentsRoundData);
       await delay(500);
       isProcessingRound = false;
