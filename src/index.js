@@ -21,6 +21,22 @@
  * node index.js
  */
 
+// CRITICAL: Set up crypto polyfill BEFORE any imports
+// This prevents errors during module loading in dependencies like @noble/secp256k1
+if (!globalThis.crypto) {
+  globalThis.crypto = {
+    getRandomValues: (arr) => {
+      // Simple fallback using Node's Math.random()
+      // Only used during module loading by trystero/nostr dependencies
+      // Not needed for actual gameplay in computer mode
+      for (let i = 0; i < arr.length; i++) {
+        arr[i] = Math.floor(Math.random() * 256);
+      }
+      return arr;
+    }
+  };
+}
+
 import readline from 'readline';
 import chalk from 'chalk';
 import { readFileSync } from 'fs';
@@ -422,20 +438,6 @@ global.localStorage = {
 
 /** @global window - Minimal window object for game compatibility */
 global.window = { logging: false };
-
-/** @global crypto - Stub crypto object to prevent errors (not needed for computer mode) */
-if (!globalThis.crypto) {
-  globalThis.crypto = {
-    getRandomValues: (arr) => {
-      // Simple fallback using Node's Math.random()
-      // Only used during module loading, not in actual gameplay
-      for (let i = 0; i < arr.length; i++) {
-        arr[i] = Math.floor(Math.random() * 256);
-      }
-      return arr;
-    }
-  };
-}
 
 // Suppress debug output from the game engine  
 const originalConsoleLog = console.log;
