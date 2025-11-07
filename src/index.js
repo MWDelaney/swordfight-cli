@@ -796,7 +796,7 @@ async function startGame() {
       console.log(chalk.bold.green('╚════════════════════════════════════════════════════════════╝'));
       console.log();
       console.log(chalk.white(`  The ${game.opponentsCharacter.name} falls before you!`));
-      console.log(chalk.dim(`  Your legend grows...`));
+      console.log(chalk.dim('  Your legend grows...'));
       console.log();
       rl.close();
       process.exit(0);
@@ -820,7 +820,7 @@ async function startGame() {
       console.log(chalk.bold.red('╚════════════════════════════════════════════════════════════╝'));
       console.log();
       console.log(chalk.white(`  ${game.opponentsCharacter.name} has bested you in combat.`));
-      console.log(chalk.dim(`  You have fallen...`));
+      console.log(chalk.dim('  You have fallen...'));
       console.log();
       rl.close();
       process.exit(0);
