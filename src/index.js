@@ -423,7 +423,7 @@ global.localStorage = {
 /** @global window - Minimal window object for game compatibility */
 global.window = { logging: false };
 
-// Suppress debug output from the game engine
+// Suppress debug output from the game engine  
 const originalConsoleLog = console.log;
 const suppressedPatterns = [
   /^Applied \d+ damage to .+\. New health: \d+$/,
@@ -597,14 +597,17 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
   // Damage narrative
   const damageParts = [];
 
-  if (opponentsRoundData.totalScore > 0 && myRoundData.totalScore > 0) {
+  const playerDealtDamage = myRoundData.totalScore > 0 && myRoundData.score !== '';
+  const opponentDealtDamage = opponentsRoundData.totalScore > 0 && opponentsRoundData.score !== '';
+
+  if (opponentDealtDamage && playerDealtDamage) {
     // Both hit
     damageParts.push(`${chalk.red(`You take ${opponentsRoundData.totalScore} damage`)}`);
     damageParts.push(`${chalk.green(`deal ${myRoundData.totalScore} in return`)}`);
-  } else if (opponentsRoundData.totalScore > 0) {
+  } else if (opponentDealtDamage) {
     // Only opponent hit
     damageParts.push(`${chalk.red(`You take ${opponentsRoundData.totalScore} damage`)}`);
-  } else if (myRoundData.totalScore > 0) {
+  } else if (playerDealtDamage) {
     // Only player hit
     damageParts.push(`${chalk.green(`You deal ${myRoundData.totalScore} damage`)}`);
   }
@@ -622,17 +625,17 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
   // Player outcome
   lines.push(chalk.cyan('➤ You:') + (opponentsRoundData.result.name ? ' ' + chalk.bold(opponentsRoundData.result.name) : ''));
 
-  if (opponentsRoundData.totalScore > 0) {
+  if (opponentsRoundData.totalScore > 0 && opponentsRoundData.score !== '') {
     lines.push(chalk.red(`  💔 Took ${opponentsRoundData.totalScore} damage from opponent`));
   }
 
-  if (myRoundData.totalScore > 0) {
+  if (myRoundData.totalScore > 0 && myRoundData.score !== '') {
     lines.push(chalk.green(`  💥 Dealt ${formatDamageBreakdown(myRoundData)} to opponent`));
   }
 
   // Show bonuses the player earned for next round
-  if (myRoundData.nextRoundBonus?.length > 0) {
-    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(myRoundData.nextRoundBonus)}`));
+  if (opponentsRoundData.nextRoundBonus?.length > 0) {
+    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(opponentsRoundData.nextRoundBonus)}`));
   }
 
   if (opponentsRoundData.result.restrict?.length > 0) {
@@ -644,17 +647,17 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
   // Opponent outcome
   lines.push(chalk.red('➤ Opponent:') + (myRoundData.result.name ? ' ' + chalk.bold(myRoundData.result.name) : ''));
 
-  if (myRoundData.totalScore > 0) {
+  if (myRoundData.totalScore > 0 && myRoundData.score !== '') {
     lines.push(chalk.red(`  💔 Took ${myRoundData.totalScore} damage from you`));
   }
 
-  if (opponentsRoundData.totalScore > 0) {
+  if (opponentsRoundData.totalScore > 0 && opponentsRoundData.score !== '') {
     lines.push(chalk.green(`  💥 Dealt ${formatDamageBreakdown(opponentsRoundData)} to you`));
   }
 
   // Show bonuses the opponent earned for next round
-  if (opponentsRoundData.nextRoundBonus?.length > 0) {
-    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(opponentsRoundData.nextRoundBonus)}`));
+  if (myRoundData.nextRoundBonus?.length > 0) {
+    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(myRoundData.nextRoundBonus)}`));
   }
 
   if (myRoundData.result.restrict?.length > 0) {
@@ -759,8 +762,11 @@ async function startGame() {
     console.log();
 
     // Initialize game
-    global.localStorage.storage.clear();
     game = new Game('computer', playerCharacter, opponentSlug);
+    
+    // Clear localStorage after game creation to ensure fresh game each time
+    // This prevents the engine from loading saved game state
+    global.localStorage.storage.clear();
 
     // Event handlers for game state changes
     let isProcessingRound = false;
@@ -773,8 +779,9 @@ async function startGame() {
     adapter.addEventListener('round', async(e) => {
       const { myRoundData, opponentsRoundData } = e.detail;
       isProcessingRound = true;
-      // Store bonuses the player earned for next round
-      currentBonus = myRoundData.nextRoundBonus || [];
+      // Store bonuses for next round
+      currentBonus = opponentsRoundData.nextRoundBonus || [];
+      
       await displayRoundResult(myRoundData, opponentsRoundData);
       await delay(500);
       isProcessingRound = false;
