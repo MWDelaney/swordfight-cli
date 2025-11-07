@@ -1,61 +1,29 @@
 {
   "name": "swordfight-cli",
-  "version": "1.2.2",
-  "description": "Command-line interface for the SwordFight multiplayer game",
-  "keywords": [
-    "cli",
-    "game",
-    "sword fighting",
-    "multiplayer",
-    "terminal"
-  ],
-  "author": "Michael",
-  "license": "MIT",
+  "version": "1.0.0",
+  "description": "Command-line interface for the SwordFight game engine",
   "type": "module",
-  "main": "./dist/swordfight.js",
+  "main": "index.js",
   "bin": {
-    "swordfight": "./dist/swordfight.js",
-    "swordfight-cli": "./dist/swordfight.js"
+    "swordfight": "./index.js"
   },
-  "files": [
-    "dist/",
-    "scripts/",
-    "README.md"
-  ],
   "scripts": {
-    "build": "node scripts/build.js",
-    "prepublishOnly": "npm run build",
-    "start": "node bin/swordfight.js",
-    "test": "node scripts/test.js",
-    "test:complete-game": "node scripts/test-complete-game.js",
-    "test:simple-peer": "node scripts/test-simple-two-peer.js",
-    "test:polyfills": "node scripts/test-polyfills.js",
-    "test:all": "npm run lint && npm run test && npm run test:complete-game && npm run test:simple-peer && npm run test:polyfills",
-    "lint": "eslint bin lib scripts --ext .js",
-    "lint:fix": "eslint bin lib scripts --ext .js --fix",
-    "release": "npm version patch && git push origin main --tags",
-    "release:minor": "npm version minor && git push origin main --tags",
-    "release:major": "npm version major && git push origin main --tags"
+    "start": "node index.js"
   },
+  "keywords": [
+    "game",
+    "cli",
+    "sword-fighting",
+    "terminal",
+    "interactive"
+  ],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "node-datachannel": "^0.28.0",
-    "swordfight-engine": "^1.0.4",
-    "ws": "^8.18.3"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.30.1",
-    "esbuild": "^0.19.12",
-    "eslint": "^9.30.1"
+    "chalk": "^5.3.0",
+    "swordfight-engine": "file:../.."
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/MWDelaney/swordfight-cli.git"
-  },
-  "bugs": {
-    "url": "https://github.com/MWDelaney/swordfight-cli/issues"
-  },
-  "homepage": "https://swordfight.me"
+  }
 }
