@@ -25,9 +25,17 @@
   ],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MWDelaney/swordfight-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MWDelaney/swordfight-cli/issues"
+  },
+  "homepage": "https://github.com/MWDelaney/swordfight-cli#readme",
   "dependencies": {
     "chalk": "^5.3.0",
-    "swordfight-engine": "file:../.."
+    "swordfight-engine": "*"
   },
   "devDependencies": {
     "eslint": "^8.57.0"
