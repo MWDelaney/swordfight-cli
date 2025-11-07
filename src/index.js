@@ -613,9 +613,9 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
     lines.push(chalk.green(`  💥 Dealt ${formatDamageBreakdown(myRoundData)} to opponent`));
   }
 
-  // Show bonuses the opponent gave to the player (bonuses player will receive next round)
-  if (opponentsRoundData.nextRoundBonus?.length > 0) {
-    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(opponentsRoundData.nextRoundBonus)}`));
+  // Show bonuses the player earned for next round
+  if (myRoundData.nextRoundBonus?.length > 0) {
+    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(myRoundData.nextRoundBonus)}`));
   }
 
   if (opponentsRoundData.result.restrict?.length > 0) {
@@ -635,9 +635,9 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
     lines.push(chalk.green(`  💥 Dealt ${formatDamageBreakdown(opponentsRoundData)} to you`));
   }
 
-  // Show bonuses the player gave to the opponent (bonuses opponent will receive next round)
-  if (myRoundData.nextRoundBonus?.length > 0) {
-    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(myRoundData.nextRoundBonus)}`));
+  // Show bonuses the opponent earned for next round
+  if (opponentsRoundData.nextRoundBonus?.length > 0) {
+    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(opponentsRoundData.nextRoundBonus)}`));
   }
 
   if (myRoundData.result.restrict?.length > 0) {
