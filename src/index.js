@@ -423,7 +423,7 @@ global.localStorage = {
 /** @global window - Minimal window object for game compatibility */
 global.window = { logging: false };
 
-// Suppress debug output from the game engine  
+// Suppress debug output from the game engine
 const originalConsoleLog = console.log;
 const suppressedPatterns = [
   /^Applied \d+ damage to .+\. New health: \d+$/,
@@ -434,7 +434,7 @@ const suppressedPatterns = [
 console.log = function(...args) {
   const message = args.join(' ');
   const shouldSuppress = suppressedPatterns.some(pattern => pattern.test(message));
-  
+
   if (!shouldSuppress) {
     originalConsoleLog.apply(console, args);
   }
@@ -763,7 +763,7 @@ async function startGame() {
 
     // Initialize game
     game = new Game('computer', playerCharacter, opponentSlug);
-    
+
     // Clear localStorage after game creation to ensure fresh game each time
     // This prevents the engine from loading saved game state
     global.localStorage.storage.clear();
@@ -781,7 +781,7 @@ async function startGame() {
       isProcessingRound = true;
       // Store bonuses for next round
       currentBonus = opponentsRoundData.nextRoundBonus || [];
-      
+
       await displayRoundResult(myRoundData, opponentsRoundData);
       await delay(500);
       isProcessingRound = false;
@@ -798,7 +798,8 @@ async function startGame() {
       if (gameEnded) {
         return;
       }
-      currentMoves = game.Moves.filteredMoves;
+      // Get fresh filtered moves based on current game state
+      currentMoves = game.getAvailableMoves();
       await promptForMove();
     });
 
