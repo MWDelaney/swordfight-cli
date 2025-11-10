@@ -1,6 +1,6 @@
 {
   "name": "swordfight-cli",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Command-line interface for the SwordFight game engine",
   "type": "module",
   "main": "src/index.js",
