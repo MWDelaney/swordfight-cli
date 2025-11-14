@@ -741,8 +741,9 @@ async function startGame() {
   try {
     const playerCharacter = await selectCharacter();
 
-    // Random opponent
-    const availableCharacterSlugs = CharacterLoader.getAvailableCharacters();
+    // Random opponent (exclude player's character)
+    const availableCharacterSlugs = CharacterLoader.getAvailableCharacters()
+      .filter(slug => slug !== playerCharacter.slug);
     const opponentSlug = availableCharacterSlugs[Math.floor(Math.random() * availableCharacterSlugs.length)];
     const opponentData = CharacterLoader.getCharacter(opponentSlug);
 
