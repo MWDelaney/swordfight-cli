@@ -799,8 +799,8 @@ async function startGame() {
       if (gameEnded) {
         return;
       }
-      // Get fresh filtered moves based on current game state
-      currentMoves = game.getAvailableMoves();
+      // game.Moves is the array of filtered moves based on current game state
+      currentMoves = game.Moves;
       await promptForMove();
     });
 

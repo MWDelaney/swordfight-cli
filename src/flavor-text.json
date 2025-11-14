@@ -29,6 +29,66 @@
       "The goblin's yellow eyes gleam with cunning and bloodlust.",
       "Your green-skinned opponent chitters excitedly, bouncing on clawed feet.",
       "A scrappy goblin warrior charges forward with reckless abandon."
+    ],
+    "goblin": [
+      "A snarling goblin scurries into view, mace clutched in gnarled claws.",
+      "Your foe cackles wickedly, green skin glistening with anticipation.",
+      "A vicious goblin warrior appears, surprisingly well-armed and dangerous.",
+      "The goblin fighter grins with sharp teeth, eager for combat.",
+      "A diminutive but deadly creature bounds forth, weapon at the ready.",
+      "The goblin's yellow eyes gleam with cunning and bloodlust.",
+      "Your green-skinned opponent chitters excitedly, bouncing on clawed feet.",
+      "A scrappy goblin warrior charges forward with reckless abandon."
+    ],
+    "human-monk": [
+      "A serene monk steps forward, quarterstaff held with perfect balance.",
+      "Your opponent moves with fluid grace, their weapon an extension of their body.",
+      "A disciplined warrior approaches, eyes focused and mind clear.",
+      "The monk's stance speaks of years spent mastering ancient martial arts.",
+      "Before you stands a fighter whose calm demeanor masks deadly skill.",
+      "A robed figure twirls their staff with practiced ease, ready for combat.",
+      "Your adversary radiates an aura of inner peace and outer danger.",
+      "The monk bows respectfully before assuming a fighting stance."
+    ],
+    "lizard-man": [
+      "A massive reptilian warrior hisses menacingly, scimitar gleaming.",
+      "Scales glisten in the light as the lizard-man advances with predatory grace.",
+      "Your opponent's forked tongue flicks out, tasting the air for fear.",
+      "A cold-blooded fighter stalks forward, tail lashing with anticipation.",
+      "The lizard-man's yellow eyes fix upon you with reptilian intelligence.",
+      "Before you stands a scaled warrior, both savage and cunning.",
+      "Your foe moves with surprising speed for such a heavily-muscled creature.",
+      "The reptilian fighter's claws click against stone as it circles you."
+    ],
+    "mummy": [
+      "Ancient bandages rustle as the undead guardian rises to challenge you.",
+      "A mummy shambles forward, ancient mace gripped in desiccated hands.",
+      "The smell of ancient spices and death precedes this cursed warrior.",
+      "Millennia-old eyes burn with unnatural light beneath tattered wrappings.",
+      "The mummy's movements are slow but inexorable, like the march of time itself.",
+      "Before you stands a royal corpse, disturbed from its eternal slumber.",
+      "Your opponent moves with the patience of the undead—it has all eternity.",
+      "Ancient curses seem to writhe around the mummy like invisible serpents."
+    ],
+    "skeleton": [
+      "Bones clatter as an undead warrior shambles into view, sword and shield ready.",
+      "Empty eye sockets regard you with an eerie, lifeless gaze.",
+      "The skeleton's jaw hangs open in a permanent, silent scream of battle.",
+      "Your opponent's bony fingers grip its weapons with supernatural strength.",
+      "A skeletal warrior advances, animated by dark necromantic power.",
+      "The undead fighter moves with jerky, unnatural motions.",
+      "Bones rattle and click with each step as death itself approaches.",
+      "Your foe stands before you, a grim reminder that death is never the end."
+    ],
+    "troll": [
+      "A massive troll lumbers forward, club dragging on the ground behind it.",
+      "Your opponent's hulking form casts a shadow that seems to swallow the light.",
+      "The troll's brutish features twist into a savage grin of anticipation.",
+      "A mountain of muscle and rage stomps toward you, the earth trembling.",
+      "Before you stands a creature of nightmare, all teeth and fury and brute strength.",
+      "The troll's roar shakes your bones as it hefts its massive weapon.",
+      "Your foe towers above you, radiating raw, primal power.",
+      "A regenerating horror approaches, eager to crush you beneath its club."
     ]
   },
   "locations": [
