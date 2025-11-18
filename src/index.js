@@ -693,8 +693,9 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
  * @returns {Promise<string>} Promise that resolves with selected character slug
  */
 async function selectCharacter() {
-  const menuItems = CharacterLoader.getAvailableCharacters().map(slug => {
-    const char = CharacterLoader.getCharacter(slug);
+  const characterSlugs = CharacterLoader.getAvailableCharacters();
+  const menuItems = await Promise.all(characterSlugs.map(async slug => {
+    const char = await CharacterLoader.getCharacter(slug);
     return {
       name: `${char.name} [❤️ ${char.health} HP]`,
       slug: slug,
@@ -702,7 +703,7 @@ async function selectCharacter() {
       weapon: char.weapon,
       shield: char.shield
     };
-  });
+  }));
 
   const selected = await selectFromMenu(menuItems, null, 'Choose Your Champion');
   console.log();
@@ -743,9 +744,9 @@ async function startGame() {
 
     // Random opponent (exclude player's character)
     const availableCharacterSlugs = CharacterLoader.getAvailableCharacters()
-      .filter(slug => slug !== playerCharacter.slug);
+      .filter(slug => slug !== playerCharacter);
     const opponentSlug = availableCharacterSlugs[Math.floor(Math.random() * availableCharacterSlugs.length)];
-    const opponentData = CharacterLoader.getCharacter(opponentSlug);
+    const opponentData = await CharacterLoader.getCharacter(opponentSlug);
 
     // Atmospheric introduction
     console.log(chalk.green('\n✓ Preparing for battle...\n'));
