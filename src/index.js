@@ -27,6 +27,12 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { Game, CharacterLoader } from 'swordfight-engine';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const packageJson = require('../package.json');
+const CLI_VERSION = packageJson.version;
+const ENGINE_VERSION = packageJson.dependencies['swordfight-engine'].replace('^', '');
 
 // ES module path utilities
 const __filename = fileURLToPath(import.meta.url);
@@ -309,10 +315,10 @@ function selectFromMenu(items, bonusInfo = null, headerText = 'Choose Your Actio
             const sign = totalMod > 0 ? '+' : '';
             modifierText = ` ${modColor(`[${sign}${totalMod}]`)}`;
 
-            // If there's a bonus affecting this move, show breakdown
+            // If there's a bonus affecting this move, show breakdown with star emoji
             if (bonus !== 0) {
               const bonusSign = bonus > 0 ? '+' : '';
-              modifierText += chalk.dim(` (${baseMod} ${bonusSign}${bonus})`);
+              modifierText += chalk.yellow(' ⭐') + chalk.dim(` (${baseMod} ${bonusSign}${bonus})`);
             }
           }
         }
@@ -446,7 +452,10 @@ global.document = adapter;
 global.localStorage = {
   storage: new Map(),
   getItem(key) { return this.storage.get(key) || null; },
-  setItem(key, value) { this.storage.set(key, value); }
+  setItem(_key, _value) { 
+    // Silently ignore - we don't want to persist game state in CLI
+    // The engine tries to save but we intentionally don't store it
+  }
 };
 
 /** @global window - Minimal window object for game compatibility */
@@ -454,10 +463,16 @@ global.window = { logging: false };
 
 // Suppress debug output from the game engine
 const originalConsoleLog = console.log;
+const originalConsoleError = console.error;
 const suppressedPatterns = [
-  /^Applied \d+ damage to .+\. New health: \d+$/,
+  /^Applied -?\d+ damage to .+\. New health: -?\d+$/,
   /^.+ takes \d+ damage$/,
-  /^.+ health: \d+$/
+  /^.+ health: -?\d+$/
+];
+
+const suppressedErrorPatterns = [
+  /^Error in setup:.*Converting circular structure to JSON/s,
+  /TypeError: Converting circular structure to JSON/
 ];
 
 console.log = function(...args) {
@@ -466,6 +481,15 @@ console.log = function(...args) {
 
   if (!shouldSuppress) {
     originalConsoleLog.apply(console, args);
+  }
+};
+
+console.error = function(...args) {
+  const message = args.join(' ');
+  const shouldSuppress = suppressedErrorPatterns.some(pattern => pattern.test(message));
+
+  if (!shouldSuppress) {
+    originalConsoleError.apply(console, args);
   }
 };
 
@@ -654,17 +678,29 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
   // Player outcome
   lines.push(chalk.cyan('➤ You:') + (opponentsRoundData.result.name ? ' ' + chalk.bold(opponentsRoundData.result.name) : ''));
 
-  if (opponentsRoundData.totalScore > 0 && opponentsRoundData.score !== '') {
-    lines.push(chalk.red(`  💔 Took ${opponentsRoundData.totalScore} damage from opponent`));
+  // Show damage taken (even if 0 or negative, to show the math)
+  if (opponentsRoundData.score !== '') {
+    if (opponentsRoundData.totalScore > 0) {
+      lines.push(chalk.red(`  💔 Took ${opponentsRoundData.totalScore} damage from opponent`));
+    } else if (opponentsRoundData.totalScore <= 0 && (opponentsRoundData.bonus !== 0 || opponentsRoundData.moveModifier !== 0)) {
+      // Show when damage was reduced to 0 or less
+      lines.push(chalk.dim(`  🛡️  Attack reduced to ${opponentsRoundData.totalScore} damage `) + chalk.dim(formatDamageBreakdown(opponentsRoundData)));
+    }
   }
 
-  if (myRoundData.totalScore > 0 && myRoundData.score !== '') {
-    lines.push(chalk.green(`  💥 Dealt ${formatDamageBreakdown(myRoundData)} to opponent`));
+  // Show damage dealt (even if 0 or negative, to show the math)
+  if (myRoundData.score !== '') {
+    if (myRoundData.totalScore > 0) {
+      lines.push(chalk.green(`  💥 Dealt ${formatDamageBreakdown(myRoundData)} to opponent`));
+    } else if (myRoundData.totalScore <= 0 && (myRoundData.bonus !== 0 || myRoundData.moveModifier !== 0)) {
+      // Show when damage was reduced to 0 or less
+      lines.push(chalk.dim(`  🛡️  Attack reduced to ${myRoundData.totalScore} damage `) + chalk.dim(formatDamageBreakdown(myRoundData)));
+    }
   }
 
   // Show bonuses the player earned for next round
-  if (myRoundData.nextRoundBonus?.length > 0) {
-    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(myRoundData.nextRoundBonus)}`));
+  if (opponentsRoundData.nextRoundBonus?.length > 0) {
+    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(opponentsRoundData.nextRoundBonus)}`));
   }
 
   if (opponentsRoundData.result.restrict?.length > 0) {
@@ -680,17 +716,29 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
   // Opponent outcome
   lines.push(chalk.red('➤ Opponent:') + (myRoundData.result.name ? ' ' + chalk.bold(myRoundData.result.name) : ''));
 
-  if (myRoundData.totalScore > 0 && myRoundData.score !== '') {
-    lines.push(chalk.red(`  💔 Took ${myRoundData.totalScore} damage from you`));
+  // Show damage taken (even if 0 or negative, to show the math)
+  if (myRoundData.score !== '') {
+    if (myRoundData.totalScore > 0) {
+      lines.push(chalk.red(`  💔 Took ${myRoundData.totalScore} damage from you`));
+    } else if (myRoundData.totalScore <= 0 && (myRoundData.bonus !== 0 || myRoundData.moveModifier !== 0)) {
+      // Show when damage was reduced to 0 or less
+      lines.push(chalk.dim(`  🛡️  Attack reduced to ${myRoundData.totalScore} damage `) + chalk.dim(formatDamageBreakdown(myRoundData)));
+    }
   }
 
-  if (opponentsRoundData.totalScore > 0 && opponentsRoundData.score !== '') {
-    lines.push(chalk.green(`  💥 Dealt ${formatDamageBreakdown(opponentsRoundData)} to you`));
+  // Show damage dealt (even if 0 or negative, to show the math)
+  if (opponentsRoundData.score !== '') {
+    if (opponentsRoundData.totalScore > 0) {
+      lines.push(chalk.green(`  💥 Dealt ${formatDamageBreakdown(opponentsRoundData)} to you`));
+    } else if (opponentsRoundData.totalScore <= 0 && (opponentsRoundData.bonus !== 0 || opponentsRoundData.moveModifier !== 0)) {
+      // Show when damage was reduced to 0 or less
+      lines.push(chalk.dim(`  🛡️  Attack reduced to ${opponentsRoundData.totalScore} damage `) + chalk.dim(formatDamageBreakdown(opponentsRoundData)));
+    }
   }
 
   // Show bonuses the opponent earned for next round
-  if (opponentsRoundData.nextRoundBonus?.length > 0) {
-    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(opponentsRoundData.nextRoundBonus)}`));
+  if (myRoundData.nextRoundBonus?.length > 0) {
+    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(myRoundData.nextRoundBonus)}`));
   }
 
   if (myRoundData.result.restrict?.length > 0) {
@@ -836,8 +884,8 @@ async function startGame() {
     adapter.addEventListener('round', async(e) => {
       const { myRoundData, opponentsRoundData } = e.detail;
       isProcessingRound = true;
-      // Store bonuses for next round
-      currentBonus = myRoundData.nextRoundBonus || [];
+      // Store bonuses for next round (opponentsRoundData contains bonuses applied to YOU)
+      currentBonus = opponentsRoundData.nextRoundBonus || [];
 
       await displayRoundResult(myRoundData, opponentsRoundData);
       await delay(150);
@@ -943,10 +991,11 @@ process.on('SIGINT', () => {
 
 // Display welcome banner
 console.log();
-console.log(chalk.bold.yellow('╔════════════════════════════════════════════════════════════╗'));
-console.log(chalk.bold.red('               ⚔️  SWORD FIGHT ⚔️'));
-console.log(chalk.dim('          A Tale of Blades and Bravery'));
-console.log(chalk.bold.yellow('╚════════════════════════════════════════════════════════════╝'));
+console.log(chalk.bold.yellow('╔══════════════════════════════════════╗'));
+console.log(chalk.bold.red('        ⚔️  SWORD FIGHT ⚔️'));
+console.log(chalk.dim('    A Tale of Blades and Bravery'));
+console.log(chalk.dim(`     CLI v${CLI_VERSION} │ Engine v${ENGINE_VERSION}`));
+console.log(chalk.bold.yellow('╚══════════════════════════════════════╝'));
 console.log();
 console.log(chalk.dim('  Prepare yourself for mortal combat...'));
 console.log();
