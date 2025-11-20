@@ -593,7 +593,7 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
     flavorCategory = anyRestricted ? 'bothHitRestricted' : 'bothHit';
   }
 
-  lines.push(chalk.italic.dim(randomChoice(flavorText.roundResults[flavorCategory])));
+  lines.push(chalk.italic.white(randomChoice(flavorText.roundResults[flavorCategory])));
   lines.push('');
 
   // Print initial lines
@@ -604,24 +604,24 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
 
   // Format player's move with tag if present
   const playerMoveText = myRoundData.myMove.tag
-    ? `${chalk.dim(myRoundData.myMove.tag.toLowerCase() + ':')} ${chalk.cyan(myRoundData.myMove.name.toLowerCase())}`
+    ? `${chalk.gray(myRoundData.myMove.tag.toLowerCase() + ':')} ${chalk.cyan(myRoundData.myMove.name.toLowerCase())}`
     : chalk.cyan(myRoundData.myMove.name.toLowerCase());
   moveFlavorParts.push(`You ${playerMoveText}`);
 
   // Format opponent's move with tag if present
   const opponentMoveText = opponentsRoundData.myMove.tag
-    ? `${chalk.dim(opponentsRoundData.myMove.tag.toLowerCase() + ':')} ${chalk.red(opponentsRoundData.myMove.name.toLowerCase())}`
+    ? `${chalk.gray(opponentsRoundData.myMove.tag.toLowerCase() + ':')} ${chalk.red(opponentsRoundData.myMove.name.toLowerCase())}`
     : chalk.red(opponentsRoundData.myMove.name.toLowerCase());
   moveFlavorParts.push(`they ${opponentMoveText}`);
 
   const moveFlavor = moveFlavorParts.join(', ');
 
-  await printCharByChar(chalk.dim(moveFlavor + '.'));
+  await printCharByChar(chalk.white(moveFlavor + '.'));
   await delay(100);
 
   const rangeFlavor = randomChoice(flavorText.moveDescriptions[myRoundData.result.range] || []);
   if (rangeFlavor) {
-    await printCharByChar(chalk.italic.dim(rangeFlavor));
+    await printCharByChar(chalk.italic.white(rangeFlavor));
     await delay(100);
   }
 
@@ -643,7 +643,7 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
   }
 
   if (resultParts.length > 0) {
-    await printCharByChar(chalk.dim(resultParts.join(', ') + '.'));
+    await printCharByChar(chalk.white(resultParts.join(', ') + '.'));
     await delay(100);
   }
 
@@ -666,7 +666,7 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
   }
 
   if (damageParts.length > 0) {
-    await printCharByChar(chalk.dim(damageParts.join(', ') + '.'));
+    await printCharByChar(chalk.white(damageParts.join(', ') + '.'));
     await delay(100);
   }
 
@@ -722,7 +722,7 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
       lines.push(chalk.red(`  💔 Took ${myRoundData.totalScore} damage from you`));
     } else if (myRoundData.totalScore <= 0 && (myRoundData.bonus !== 0 || myRoundData.moveModifier !== 0)) {
       // Show when damage was reduced to 0 or less
-      lines.push(chalk.dim(`  🛡️  Attack reduced to ${myRoundData.totalScore} damage `) + chalk.dim(formatDamageBreakdown(myRoundData)));
+      lines.push(chalk.gray(`  🛡️  Attack reduced to ${myRoundData.totalScore} damage `) + chalk.gray(formatDamageBreakdown(myRoundData)));
     }
   }
 
@@ -732,7 +732,7 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
       lines.push(chalk.green(`  💥 Dealt ${formatDamageBreakdown(opponentsRoundData)} to you`));
     } else if (opponentsRoundData.totalScore <= 0 && (opponentsRoundData.bonus !== 0 || opponentsRoundData.moveModifier !== 0)) {
       // Show when damage was reduced to 0 or less
-      lines.push(chalk.dim(`  🛡️  Attack reduced to ${opponentsRoundData.totalScore} damage `) + chalk.dim(formatDamageBreakdown(opponentsRoundData)));
+      lines.push(chalk.gray(`  🛡️  Attack reduced to ${opponentsRoundData.totalScore} damage `) + chalk.gray(formatDamageBreakdown(opponentsRoundData)));
     }
   }
 
