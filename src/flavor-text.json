@@ -8,7 +8,15 @@
       "The warrior's armor bears the marks of many battles survived.",
       "A determined fighter advances, their stance speaking of years of training.",
       "Your adversary carries themselves with the confidence of a true swordmaster.",
-      "The challenger's eyes are cold and calculating, sizing you up with precision."
+      "The challenger's eyes are cold and calculating, sizing you up with precision.",
+      "A knight in worn chainmail adjusts their grip on a notched blade.",
+      "The fighter's steady gaze never wavers as they close the distance.",
+      "Your opponent's scarred hands suggest decades of combat experience.",
+      "A grizzled veteran approaches with the calm of one who has faced death before.",
+      "The warrior's movements are economical, wasting not an ounce of energy.",
+      "Before you stands a fighter whose reputation alone has felled lesser warriors.",
+      "Your adversary's armor clinks rhythmically as they take a battle-ready stance.",
+      "A master swordsman rolls their shoulders, preparing for the inevitable clash."
     ],
     "evil-human-fighter": [
       "A dark figure emerges from the shadows, malice burning in their eyes.",
@@ -18,7 +26,15 @@
       "The villain's twisted smile promises nothing but pain and suffering.",
       "A corrupted soul draws near, their weapon stained with the blood of innocents.",
       "Evil incarnate stands before you, eager to add you to their list of victims.",
-      "Your foe's laugh echoes with dark promise as they brandish their wicked blade."
+      "Your foe's laugh echoes with dark promise as they brandish their wicked blade.",
+      "Black armor absorbs the light as a nightmare given form advances toward you.",
+      "The stench of death precedes this killer of innocents and destroyer of hope.",
+      "Your opponent's eyes hold no mercy, only the promise of a painful end.",
+      "A champion of darkness emerges, their blade dripping with unholy venom.",
+      "The villain's presence seems to corrupt the very air around them.",
+      "Before you stands one who has traded their soul for power and cruelty.",
+      "Your enemy moves with predatory grace, savoring the fear in your eyes.",
+      "A fallen warrior approaches, their once-noble heart now black as pitch."
     ],
     "goblin-fighter": [
       "A snarling goblin scurries into view, mace clutched in gnarled claws.",
@@ -28,7 +44,15 @@
       "A diminutive but deadly creature bounds forth, weapon at the ready.",
       "The goblin's yellow eyes gleam with cunning and bloodlust.",
       "Your green-skinned opponent chitters excitedly, bouncing on clawed feet.",
-      "A scrappy goblin warrior charges forward with reckless abandon."
+      "A scrappy goblin warrior charges forward with reckless abandon.",
+      "The goblin's pointed ears twitch as it sizes you up with predatory intelligence.",
+      "Ragged armor clinks as the small but fierce warrior takes a fighting stance.",
+      "Your opponent's crooked teeth flash in a manic grin of battle-hunger.",
+      "A surprisingly skilled goblin twirls its weapon with practiced malice.",
+      "The creature's claws scrape stone as it circles you like a rabid animal.",
+      "Your foe's high-pitched war cry echoes off the walls as it prepares to strike.",
+      "The goblin's scarred hide tells of many fights survived through sheer viciousness.",
+      "A wiry, muscled fighter emerges, all savage instinct and cruel intent."
     ],
     "goblin": [
       "A snarling goblin scurries into view, mace clutched in gnarled claws.",
@@ -38,7 +62,15 @@
       "A diminutive but deadly creature bounds forth, weapon at the ready.",
       "The goblin's yellow eyes gleam with cunning and bloodlust.",
       "Your green-skinned opponent chitters excitedly, bouncing on clawed feet.",
-      "A scrappy goblin warrior charges forward with reckless abandon."
+      "A scrappy goblin warrior charges forward with reckless abandon.",
+      "The goblin's pointed ears twitch as it sizes you up with predatory intelligence.",
+      "Ragged armor clinks as the small but fierce warrior takes a fighting stance.",
+      "Your opponent's crooked teeth flash in a manic grin of battle-hunger.",
+      "A surprisingly skilled goblin twirls its weapon with practiced malice.",
+      "The creature's claws scrape stone as it circles you like a rabid animal.",
+      "Your foe's high-pitched war cry echoes off the walls as it prepares to strike.",
+      "The goblin's scarred hide tells of many fights survived through sheer viciousness.",
+      "A wiry, muscled fighter emerges, all savage instinct and cruel intent."
     ],
     "human-monk": [
       "A serene monk steps forward, quarterstaff held with perfect balance.",
@@ -48,7 +80,15 @@
       "Before you stands a fighter whose calm demeanor masks deadly skill.",
       "A robed figure twirls their staff with practiced ease, ready for combat.",
       "Your adversary radiates an aura of inner peace and outer danger.",
-      "The monk bows respectfully before assuming a fighting stance."
+      "The monk bows respectfully before assuming a fighting stance.",
+      "Your opponent's breathing is perfectly controlled, each exhale a meditation on combat.",
+      "The monk's bare feet make no sound as they glide across the ground.",
+      "A master of the ancient ways regards you with measuring, tranquil eyes.",
+      "Your adversary's simple robe conceals muscles like coiled steel.",
+      "The monk enters a stance that has been perfected over centuries of tradition.",
+      "Your opponent's staff begins to spin in mesmerizing, deadly patterns.",
+      "A warrior-philosopher prepares to teach you a painful lesson in humility.",
+      "The monk's stillness is more threatening than another fighter's aggression."
     ],
     "lizard-man": [
       "A massive reptilian warrior hisses menacingly, scimitar gleaming.",
@@ -58,7 +98,15 @@
       "The lizard-man's yellow eyes fix upon you with reptilian intelligence.",
       "Before you stands a scaled warrior, both savage and cunning.",
       "Your foe moves with surprising speed for such a heavily-muscled creature.",
-      "The reptilian fighter's claws click against stone as it circles you."
+      "The reptilian fighter's claws click against stone as it circles you.",
+      "The lizard warrior's scales shift color slightly as it assesses your weaknesses.",
+      "Your opponent's tail acts as a deadly third limb, ready to strike without warning.",
+      "Ancient reptilian instincts guide this warrior's brutal fighting style.",
+      "The creature's throat sac inflates as it releases a bone-chilling hiss.",
+      "Your foe's slitted pupils dilate as it prepares to unleash savage fury.",
+      "A primitive warrior evolved for combat stands before you, all teeth and claws.",
+      "The lizard-man's powerful legs tense, ready to launch a lightning-fast assault.",
+      "Your opponent's buckler catches the light as the reptile assumes a defensive crouch."
     ],
     "mummy": [
       "Ancient bandages rustle as the undead guardian rises to challenge you.",
@@ -68,7 +116,15 @@
       "The mummy's movements are slow but inexorable, like the march of time itself.",
       "Before you stands a royal corpse, disturbed from its eternal slumber.",
       "Your opponent moves with the patience of the undead—it has all eternity.",
-      "Ancient curses seem to writhe around the mummy like invisible serpents."
+      "Ancient curses seem to writhe around the mummy like invisible serpents.",
+      "Dust falls from crumbling wrappings as the preserved warrior advances.",
+      "The mummy's hollow voice speaks in a long-dead tongue, promising doom.",
+      "Your opponent's flesh has long since rotted, but its strength remains undiminished.",
+      "Ancient hieroglyphs glow faintly on the bandages that bind this undead horror.",
+      "The mummy raises its weapon with the terrible certainty of the ages.",
+      "Your foe's movements echo with the weight of three thousand years of vengeance.",
+      "Bits of dried skin and bone dust mark the mummy's shuffling path toward you.",
+      "The undead warrior's presence chills the air, drawing warmth from the living."
     ],
     "skeleton": [
       "Bones clatter as an undead warrior shambles into view, sword and shield ready.",
@@ -78,7 +134,15 @@
       "A skeletal warrior advances, animated by dark necromantic power.",
       "The undead fighter moves with jerky, unnatural motions.",
       "Bones rattle and click with each step as death itself approaches.",
-      "Your foe stands before you, a grim reminder that death is never the end."
+      "Your foe stands before you, a grim reminder that death is never the end.",
+      "The skeleton's hollow ribcage echoes with ghostly whispers of ancient battles.",
+      "Your opponent's skull tilts unnaturally as it assesses you with empty sockets.",
+      "Scraps of armor still cling to the undead warrior's bleached bones.",
+      "The skeletal fighter's joints creak and pop as it assumes a fighting stance.",
+      "Dark magic animates this collection of bones into a deadly combatant.",
+      "Your foe's teeth chatter in a mockery of laughter as it readies its blade.",
+      "The skeleton moves with inhuman precision, untiring and unfeeling.",
+      "Centuries of death have not diminished this warrior's combat skills."
     ],
     "troll": [
       "A massive troll lumbers forward, club dragging on the ground behind it.",
@@ -88,7 +152,15 @@
       "Before you stands a creature of nightmare, all teeth and fury and brute strength.",
       "The troll's roar shakes your bones as it hefts its massive weapon.",
       "Your foe towers above you, radiating raw, primal power.",
-      "A regenerating horror approaches, eager to crush you beneath its club."
+      "A regenerating horror approaches, eager to crush you beneath its club.",
+      "The troll's thick hide is mottled with scars that are already healing before your eyes.",
+      "Your opponent's breath reeks of decay and carrion as it bellows its challenge.",
+      "Moss and fungus grow on the troll's back, testament to its ancient, savage nature.",
+      "The creature's beady eyes gleam with dim but malicious intelligence.",
+      "Your foe's massive arms look capable of tearing a human limb from limb.",
+      "The troll's hunched posture does nothing to diminish its overwhelming presence.",
+      "Drool drips from yellow tusks as the monster anticipates your flesh.",
+      "A living engine of destruction approaches, driven by hunger and bloodlust."
     ]
   },
   "locations": [
@@ -111,7 +183,27 @@
     "The chapel bells toll ominously in the distance.",
     "Snow begins to fall, coating the killing ground in white.",
     "You stand in a narrow alley, escape impossible for the loser.",
-    "The throne room's grandeur mocks this brutal confrontation."
+    "The throne room's grandeur mocks this brutal confrontation.",
+    "Dust swirls in the abandoned amphitheater, ghostly audience to your duel.",
+    "The market square falls silent as citizens flee the coming violence.",
+    "You meet atop a windswept cliff, the ocean roaring far below.",
+    "The dungeon's damp stones bear witness to countless deaths before yours.",
+    "A graveyard at midnight provides grim atmosphere for this fatal encounter.",
+    "The castle's great hall becomes an impromptu arena of death.",
+    "You face off in a scorched wasteland, the ground still warm from dragon fire.",
+    "An ancient battlefield, bones crunching underfoot with every step.",
+    "The crossroads at dawn—a traditional place for settling blood feuds.",
+    "Inside a burned-out cathedral, ash still falling like black snow.",
+    "A frozen lake creaks beneath your feet as you circle each other.",
+    "The gladiatorial pit's walls are stained with the blood of champions past.",
+    "You meet in the ruins of a wizard's tower, magic still crackling in the air.",
+    "A dense jungle clearing, predators watching from the shadows.",
+    "The ship's deck pitches and rolls beneath you as waves crash against the hull.",
+    "An abandoned mine shaft, darkness pressing in from all sides.",
+    "The king's throne room, your conflict witnessed by an empty seat of power.",
+    "A sacred grove desecrated by the violence about to unfold.",
+    "The guildhall's training room becomes a genuine battlefield.",
+    "You stand in the town square at high noon, townsfolk hiding behind shuttered windows."
   ],
   "ready": [
     "You grip your weapon tightly. There's no turning back.",
@@ -129,7 +221,23 @@
     "The final preparations complete, combat is inevitable.",
     "Your muscles tense. In moments, blood will be spilled.",
     "This is it. Everything you've trained for comes down to this.",
-    "Two warriors enter. Only one will leave victorious."
+    "Two warriors enter. Only one will leave victorious.",
+    "The world narrows to just you, your weapon, and your enemy.",
+    "Your training takes over as instinct replaces conscious thought.",
+    "Death hovers over the battlefield, waiting to claim its due.",
+    "You find your center. The storm of violence is about to break.",
+    "Your weapon feels like an extension of your arm, hungry for battle.",
+    "Both combatants understand—mercy is not an option here.",
+    "The point of no return has passed. Now only steel speaks truth.",
+    "Your pulse quickens as adrenaline surges through your veins.",
+    "One last breath of peace before the chaos of combat begins.",
+    "Your opponent shifts weight. The first move will come any second now.",
+    "Everything else fades away. Only this moment, this fight, exists.",
+    "You meet your fate head-on, whatever that fate may be.",
+    "The gods of war turn their attention to this deadly contest.",
+    "Your destiny will be written in the next few violent moments.",
+    "You lock eyes with death itself and refuse to look away.",
+    "The arena holds its breath. Let the bloodshed begin."
   ],
   "roundResults": {
     "bothMiss": [
@@ -146,7 +254,21 @@
       "Each fighter's defense proves equal to the other's offense.",
       "You trade near-misses in a display of martial prowess.",
       "The duel remains even as both attacks fail to connect.",
-      "Anticipation meets anticipation in this stalemate of skill."
+      "Anticipation meets anticipation in this stalemate of skill.",
+      "Both combatants read each other's intent perfectly, neutralizing all attacks.",
+      "Weapons whistle through empty air as you both evade with practiced ease.",
+      "The exchange demonstrates pure skill without bloodshed—for now.",
+      "Neither fighter gains ground in this tactical stalemate.",
+      "You mirror each other's movements in a deadly symmetry.",
+      "The battle of reflexes ends with both warriors unscathed.",
+      "Your timing matches perfectly, leaving both attacks ineffective.",
+      "An impressive display of martial skill yields no victor yet.",
+      "Both combatants prove their training in this defensive exchange.",
+      "The duel's tension builds as neither can find an opening.",
+      "Experience meets experience, leaving the contest undecided.",
+      "You trade testing blows, each preparing for the decisive moment.",
+      "The balance of power remains even in this careful exchange.",
+      "Neither warrior will give the other an easy victory."
     ],
     "bothMissRestricted": [
       "Both fighters struggle awkwardly, unable to land a clean strike.",
@@ -158,7 +280,17 @@
       "Your limited options result in predictable attacks that both evade.",
       "Hampered movements lead to a frustrated exchange of failed strikes.",
       "Both combatants stumble through ineffective attacks.",
-      "The awkward dance of restricted fighters yields no hits."
+      "The awkward dance of restricted fighters yields no hits.",
+      "Injuries and restrictions turn skilled warriors into clumsy brawlers.",
+      "Neither can execute properly, resulting in a graceless stalemate.",
+      "Your compromised state mirrors your opponent's, leaving both ineffective.",
+      "The exchange becomes almost comical in its ineffectiveness.",
+      "Both warriors curse their limitations as attacks go wide.",
+      "Restricted options force both combatants into obvious, easily-dodged strikes.",
+      "You both telegraph your intentions, making defense trivial.",
+      "The wounded, hampered dance continues without resolution.",
+      "Neither can overcome their disadvantages enough to connect.",
+      "Mutual restrictions create a frustrating deadlock."
     ],
     "playerMissOpponentHits": [
       "Your attack goes wide as your opponent's blade finds its mark!",
@@ -174,7 +306,21 @@
       "The enemy's blade slips past your defenses with ease!",
       "Your failed attack leaves you vulnerable to their riposte!",
       "Superior skill shows as your foe turns your aggression against you!",
-      "You overextend and suffer the consequences immediately!"
+      "You overextend and suffer the consequences immediately!",
+      "Your opponent exploits your failed strike with brutal efficiency!",
+      "A momentary lapse costs you dearly as their weapon connects!",
+      "Your enemy's counter-attack catches you completely exposed!",
+      "You feel the impact as your opponent's strike lands solidly!",
+      "Your failed assault creates the perfect opening for their success!",
+      "The enemy capitalizes on your mistake with a punishing blow!",
+      "Your timing is off, allowing your foe to strike unopposed!",
+      "Blood flows as your opponent proves the better fighter this round!",
+      "Your guard drops for just an instant—long enough for disaster!",
+      "The enemy's weapon finds you while yours finds only air!",
+      "You underestimate your opponent's speed—a painful lesson!",
+      "Their strike comes from an unexpected angle, catching you clean!",
+      "Your offensive effort collapses into defensive failure!",
+      "The enemy reads you like a book and writes a painful chapter!"
     ],
     "playerMissOpponentHitsRestricted": [
       "Hampered by your position, you fail to defend as the enemy strikes!",
@@ -186,7 +332,17 @@
       "Your restrictions prove fatal as the enemy exploits every weakness!",
       "Hobbled and helpless, you can only watch the attack coming!",
       "Your hampered state makes you easy prey for their assault!",
-      "Disadvantage compounds as you fail to counter their strike!"
+      "Disadvantage compounds as you fail to counter their strike!",
+      "Your injuries prevent proper defense against the incoming attack!",
+      "Restricted and wounded, you're a sitting target for your foe!",
+      "The enemy shows no mercy, striking where you cannot defend!",
+      "Your limitations become your doom as their blade finds flesh!",
+      "Unable to move effectively, you absorb the full force of their strike!",
+      "Your compromised position turns defense into a hopeless gesture!",
+      "The enemy ruthlessly presses their advantage against your weakened state!",
+      "You can't evade or block—your restrictions seal your fate!",
+      "Your opponent gleefully exploits every disadvantage you suffer!",
+      "Hampered and hurting, you can't prevent the devastating strike!"
     ],
     "playerHitsOpponentMiss": [
       "Your blade connects! Your opponent staggers from the impact.",
@@ -202,7 +358,21 @@
       "Your training shows as you land a textbook-perfect hit!",
       "They telegraph their move, allowing you to strike first!",
       "Your weapon finds its mark while theirs finds only air!",
-      "Precision and power unite in your successful assault!"
+      "Precision and power unite in your successful assault!",
+      "Your opponent's mistake becomes your opportunity for a solid hit!",
+      "You capitalize on their failed offense with a devastating counter!",
+      "The enemy's weapon whistles past as yours crashes home!",
+      "Your timing is impeccable—the strike lands perfectly!",
+      "They leave themselves open and you punish them severely!",
+      "Your superior position allows for an uncontested strike!",
+      "The enemy's defense crumbles before your assault!",
+      "You see the opening and exploit it with brutal efficiency!",
+      "Your weapon finds vulnerable flesh while theirs finds nothing!",
+      "A perfectly executed technique demonstrates your martial prowess!",
+      "Your opponent's failed gambit costs them dearly in blood!",
+      "You strike with confidence, your blade meeting no resistance!",
+      "The enemy's attempted attack leaves them exposed to yours!",
+      "Your patience pays off as you land a clean, powerful strike!"
     ],
     "playerHitsOpponentMissRestricted": [
       "You exploit your opponent's compromised position with a brutal strike!",
@@ -214,7 +384,17 @@
       "Their disadvantage becomes your opportunity for a savage hit!",
       "You ruthlessly press the attack against their compromised defense!",
       "Their restrictions prove catastrophic as your blade connects!",
-      "You punish their weakened state with a devastating strike!"
+      "You punish their weakened state with a devastating strike!",
+      "Their injuries prevent any effective defense against your assault!",
+      "You target their weakness with surgical precision and brutal force!",
+      "The enemy's limitations make them a defenseless target!",
+      "You press your advantage mercilessly against their compromised state!",
+      "Their restricted options doom them as your weapon strikes true!",
+      "You show the difference between a healthy fighter and a wounded one!",
+      "Their hampered condition ensures your attack lands unopposed!",
+      "You exploit every disadvantage they suffer with ruthless efficiency!",
+      "The enemy's limitations turn them from warrior to victim!",
+      "Your opponent's restrictions make this round's outcome inevitable!"
     ],
     "bothHit": [
       "Both fighters strike simultaneously in a brutal exchange!",
@@ -230,7 +410,21 @@
       "Offense trumps defense as both weapons find their targets!",
       "You both land telling blows in the chaotic melee!",
       "A wild exchange sees both fighters drawing blood!",
-      "Neither combatant defends, resulting in a brutal double-strike!"
+      "Neither combatant defends, resulting in a brutal double-strike!",
+      "Weapons crash through defenses on both sides simultaneously!",
+      "Pride and fury override caution—both warriors are wounded!",
+      "The brutal exchange costs both combatants dearly!",
+      "You both prioritize offense, paying the price in blood!",
+      "A vicious exchange leaves no winner, only two wounded warriors!",
+      "Both fighters land solid hits in this violent stalemate!",
+      "The savage trade demonstrates that neither will yield easily!",
+      "Mutual strikes prove both warriors' dedication and desperation!",
+      "Blood spatters as both weapons find their mark!",
+      "The cost of aggression becomes clear as both fighters are hit!",
+      "Neither can claim advantage in this painful exchange!",
+      "You both attack without regard for defense—both pay the price!",
+      "The collision of steel and flesh occurs on both sides!",
+      "This brutal trade weakens both combatants significantly!"
     ],
     "bothHitRestricted": [
       "Despite compromised positions, both fighters land vicious strikes!",
@@ -242,7 +436,17 @@
       "Disadvantages forgotten, both fighters tear into each other!",
       "Restrictions only increase the ferocity of the mutual assault!",
       "Both hampered warriors abandon defense for raw aggression!",
-      "Desperation and restriction combine in a bloody exchange!"
+      "Desperation and restriction combine in a bloody exchange!",
+      "Wounded and limited, both combatants still manage to strike true!",
+      "Your mutual disadvantages result in a clumsy but effective exchange!",
+      "Despite hampered movements, both weapons find their targets!",
+      "Restrictions turn the exchange ugly, but no less bloody!",
+      "Both fighters push through their limitations to land hits!",
+      "The compromised state of both warriors creates chaotic violence!",
+      "Neither advantage nor disadvantage—both simply hit hard!",
+      "Your limitations mirror your opponent's in this savage trade!",
+      "Hampered by injuries, both warriors strike with desperation!",
+      "The awkward, restricted exchange somehow results in mutual damage!"
     ]
   },
   "moveDescriptions": {
@@ -254,7 +458,15 @@
       "Bodies press close as weapons seek vulnerable flesh.",
       "You can smell your opponent's sweat in this intimate violence.",
       "The fight becomes personal at this brutal range.",
-      "Every muscle strains as you battle at arm's reach."
+      "Every muscle strains as you battle at arm's reach.",
+      "The space between you and death measures mere inches.",
+      "At this range, there's nowhere to hide and no room for error.",
+      "You feel the heat radiating from your opponent's exertion.",
+      "Blades flash in the narrow space separating life from death.",
+      "Your opponent's heartbeat is nearly audible in this desperate proximity.",
+      "Close enough to strike, close enough to be struck in return.",
+      "The intimate brutality of melee combat unfolds between you.",
+      "You trade blows at a range where skill matters more than strength."
     ],
     "far": [
       "Both fighters maintain distance, circling like wary predators.",
@@ -264,7 +476,15 @@
       "You circle at range, looking for an opening to exploit.",
       "Distance provides safety but limits offensive options.",
       "The fighters move cautiously, respecting each other's reach.",
-      "Space separates the combatants as they prepare their next moves."
+      "Space separates the combatants as they prepare their next moves.",
+      "You measure each other from a careful distance, weapons at the ready.",
+      "The combatants orbit one another, seeking advantage before closing.",
+      "Respect for your opponent's skill keeps you at a cautious range.",
+      "You maintain separation, watching for the slightest opening.",
+      "Both fighters test the distance, probing for weaknesses.",
+      "The arena's space becomes a tactical consideration as you maneuver.",
+      "At this range, the battle is as much mental as physical.",
+      "You size each other up from across the dueling ground."
     ]
   },
   "victory": [
@@ -277,7 +497,17 @@
     "The defeated warrior crumples to the ground in defeat.",
     "You stand triumphant over your fallen adversary.",
     "Your superior skill has won the day. The fight is yours.",
-    "The final strike connects. Your opponent falls, vanquished."
+    "The final strike connects. Your opponent falls, vanquished.",
+    "Blood drips from your weapon as your enemy breathes their last.",
+    "You emerge victorious, your reputation growing with this triumph.",
+    "The duel ends with your opponent's life pooling crimson on the ground.",
+    "Your enemy's eyes glaze over as they slip into unconsciousness—or worse.",
+    "You lower your weapon slowly. The threat has been neutralized.",
+    "Victory tastes sweet as your opponent falls before your prowess.",
+    "The gods of battle smile upon you this day. You have proven worthy.",
+    "Your training and determination have carried you through to victory.",
+    "Another enemy defeated, another chapter written in your legend.",
+    "Your foe's final gasp marks the end of their challenge to your skill."
   ],
   "defeat": [
     "Your strength fails you. The world spins as you fall.",
@@ -289,6 +519,16 @@
     "Consciousness fades as you collapse onto the cold ground.",
     "The victor's blade has done its work. You can fight no more.",
     "Your body betrays you, and you fall into darkness.",
-    "Defeat tastes bitter as you sink into oblivion."
+    "Defeat tastes bitter as you sink into oblivion.",
+    "The cold ground rushes up to meet you as your vision darkens.",
+    "You tried your best, but your best was not enough this day.",
+    "Your opponent's final blow sends you crashing down in defeat.",
+    "Pride cannot sustain you as you collapse, broken and beaten.",
+    "The world fades to black as your enemy stands over your fallen form.",
+    "Your journey ends here, at the point of your conqueror's blade.",
+    "Blood loss and pain drag you down into merciful unconsciousness.",
+    "You fall, knowing you fought with honor even in defeat.",
+    "The taste of failure mingles with blood in your mouth as you go down.",
+    "Your vision tunnels to a pinpoint, then winks out entirely as you fall."
   ]
 }

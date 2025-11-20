@@ -34,7 +34,7 @@ const __dirname = dirname(__filename);
 
 // Constants
 /** @constant {number} TYPING_DELAY - Milliseconds between each line for dramatic effect */
-const TYPING_DELAY = 150;
+const TYPING_DELAY = 50;
 
 // Load narrative flavor text for atmospheric descriptions
 const flavorText = JSON.parse(
@@ -71,9 +71,9 @@ async function printLineByLine(lines) {
 /**
  * Prints text character by character for maximum dramatic effect
  * @param {string} text - Text to print character by character
- * @param {number} charDelay - Delay in ms between each character (default: 30ms)
+ * @param {number} charDelay - Delay in ms between each character (default: 10ms)
  */
-async function printCharByChar(text, charDelay = 30) {
+async function printCharByChar(text, charDelay = 10) {
   for (const char of text) {
     process.stdout.write(char);
     await delay(charDelay);
@@ -121,11 +121,12 @@ function formatEquipment(character) {
 /**
  * Formats bonus descriptions from a bonus array into human-readable text
  * Converts bonus objects like {strong: "2"} into "+2 to strong"
+ * Handles both positive and negative bonuses
  * @param {Object[]} bonusArray - Array of bonus objects with type-value pairs
  * @returns {string} Comma-separated list of bonus descriptions
  * @example
- * formatBonusDescriptions([{strong: "2"}, {high: "1"}])
- * // Returns: "+2 to strong, +1 to high"
+ * formatBonusDescriptions([{strong: "2"}, {high: "-1"}])
+ * // Returns: "+2 to strong, -1 to high"
  */
 function formatBonusDescriptions(bonusArray) {
   return bonusArray
@@ -133,7 +134,9 @@ function formatBonusDescriptions(bonusArray) {
       const entries = Object.entries(bonusObj);
       if (entries.length > 0) {
         const [type, value] = entries[0];
-        return `+${value} to ${type}`;
+        const numValue = parseInt(value);
+        const sign = numValue >= 0 ? '+' : '';
+        return `${sign}${value} to ${type}`;
       }
       return null;
     })
@@ -144,6 +147,7 @@ function formatBonusDescriptions(bonusArray) {
 /**
  * Formats damage breakdown for display in round results
  * Shows total damage with optional breakdown of components (base, modifier, bonus)
+ * Properly handles negative values for defensive moves
  * @param {Object} roundData - Round data containing score information
  * @param {number} roundData.totalScore - Total damage dealt
  * @param {number} roundData.score - Base damage from attack
@@ -157,7 +161,7 @@ function formatBonusDescriptions(bonusArray) {
 function formatDamageBreakdown(roundData) {
   let result = `${roundData.totalScore} damage`;
 
-  if (roundData.bonus > 0 || roundData.moveModifier !== 0) {
+  if (roundData.bonus !== 0 || roundData.moveModifier !== 0) {
     const parts = [];
     if (roundData.score) {
       parts.push(`${roundData.score} base`);
@@ -165,8 +169,8 @@ function formatDamageBreakdown(roundData) {
     if (roundData.moveModifier) {
       parts.push(`${roundData.moveModifier > 0 ? '+' : ''}${roundData.moveModifier} move`);
     }
-    if (roundData.bonus > 0) {
-      parts.push(`+${roundData.bonus} bonus`);
+    if (roundData.bonus !== 0) {
+      parts.push(`${roundData.bonus > 0 ? '+' : ''}${roundData.bonus} bonus`);
     }
     result += chalk.dim(` (${parts.join(', ')})`);
   }
@@ -292,7 +296,26 @@ function selectFromMenu(items, bonusInfo = null, headerText = 'Choose Your Actio
       items.forEach((item, index) => {
         const tag = item.tag || '';
         const bonus = calculateMoveBonus(item, bonusInfo);
-        const bonusText = bonus > 0 ? chalk.yellow(` ⭐+${bonus}`) : '';
+
+        // Build modifier display text
+        let modifierText = '';
+        if (item.mod !== undefined) {
+          const baseMod = parseInt(item.mod);
+          const totalMod = baseMod + bonus;
+
+          // Show total modifier with color coding
+          if (totalMod !== 0) {
+            const modColor = totalMod > 0 ? chalk.green : totalMod < 0 ? chalk.red : chalk.dim;
+            const sign = totalMod > 0 ? '+' : '';
+            modifierText = ` ${modColor(`[${sign}${totalMod}]`)}`;
+
+            // If there's a bonus affecting this move, show breakdown
+            if (bonus !== 0) {
+              const bonusSign = bonus > 0 ? '+' : '';
+              modifierText += chalk.dim(` (${baseMod} ${bonusSign}${bonus})`);
+            }
+          }
+        }
 
         // Show tag header when it changes
         if (tag && tag !== lastTag) {
@@ -301,15 +324,21 @@ function selectFromMenu(items, bonusInfo = null, headerText = 'Choose Your Actio
         }
 
         if (index === selectedIndex) {
-          console.log(chalk.bold.yellow(`    ▶ ${item.name}${bonusText}`));
+          console.log(chalk.bold.yellow(`    ▶ ${item.name}${modifierText}`));
         } else {
-          console.log(chalk.dim(`      ${item.name}${bonusText}`));
+          console.log(chalk.dim(`      ${item.name}${modifierText}`));
         }
 
         // Always show description and equipment for all items (card-style)
         if (item.description) {
           const indent = index === selectedIndex ? '        ' : '        ';
           console.log(chalk.dim(`${indent}${item.description}`));
+        }
+
+        // Show heal property if present
+        if (item.heal) {
+          const indent = index === selectedIndex ? '        ' : '        ';
+          console.log(chalk.green(`${indent}💚 Heals ${item.heal} HP (if not damaged)`));
         }
 
         if (item.weapon !== undefined || item.shield !== undefined) {
@@ -564,12 +593,12 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
   const moveFlavor = moveFlavorParts.join(', ');
 
   await printCharByChar(chalk.dim(moveFlavor + '.'));
-  await delay(300);
+  await delay(100);
 
   const rangeFlavor = randomChoice(flavorText.moveDescriptions[myRoundData.result.range] || []);
   if (rangeFlavor) {
     await printCharByChar(chalk.italic.dim(rangeFlavor));
-    await delay(300);
+    await delay(100);
   }
 
   // Results and damage narrative
@@ -591,7 +620,7 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
 
   if (resultParts.length > 0) {
     await printCharByChar(chalk.dim(resultParts.join(', ') + '.'));
-    await delay(300);
+    await delay(100);
   }
 
   // Damage narrative
@@ -614,7 +643,7 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
 
   if (damageParts.length > 0) {
     await printCharByChar(chalk.dim(damageParts.join(', ') + '.'));
-    await delay(300);
+    await delay(100);
   }
 
   console.log();
@@ -634,12 +663,16 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
   }
 
   // Show bonuses the player earned for next round
-  if (opponentsRoundData.nextRoundBonus?.length > 0) {
-    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(opponentsRoundData.nextRoundBonus)}`));
+  if (myRoundData.nextRoundBonus?.length > 0) {
+    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(myRoundData.nextRoundBonus)}`));
   }
 
   if (opponentsRoundData.result.restrict?.length > 0) {
     lines.push(chalk.gray(`  ⚠️  Restrictions: ${opponentsRoundData.result.restrict.join(', ')}`));
+  }
+
+  if (opponentsRoundData.result.allowOnly?.length > 0) {
+    lines.push(chalk.cyan(`  ✓ Allowed: ${opponentsRoundData.result.allowOnly.join(', ')}`));
   }
 
   lines.push('');
@@ -656,12 +689,16 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
   }
 
   // Show bonuses the opponent earned for next round
-  if (myRoundData.nextRoundBonus?.length > 0) {
-    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(myRoundData.nextRoundBonus)}`));
+  if (opponentsRoundData.nextRoundBonus?.length > 0) {
+    lines.push(chalk.yellow(`  ⭐ Next round: ${formatBonusDescriptions(opponentsRoundData.nextRoundBonus)}`));
   }
 
   if (myRoundData.result.restrict?.length > 0) {
     lines.push(chalk.gray(`  ⚠️  Restrictions: ${myRoundData.result.restrict.join(', ')}`));
+  }
+
+  if (myRoundData.result.allowOnly?.length > 0) {
+    lines.push(chalk.cyan(`  ✓ Allowed: ${myRoundData.result.allowOnly.join(', ')}`));
   }
 
   // Special effects
@@ -676,6 +713,24 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
   }
   if (opponentsRoundData.result.shieldDestroyed) {
     lines.push(chalk.yellow('    🛡️  Your shield shatters under the blow!'));
+  }
+
+  // Healing effects
+  if (opponentsRoundData.result.heal && (myRoundData.score === '' || myRoundData.totalScore <= 0)) {
+    const healAmount = opponentsRoundData.result.heal;
+    const currentHP = game.myCharacter.health;
+    const maxHP = game.myCharacter.startingHealth;
+    if (currentHP < maxHP) {
+      lines.push(chalk.green(`    💚 You regenerated ${healAmount} HP!`));
+    }
+  }
+  if (myRoundData.result.heal && (opponentsRoundData.score === '' || opponentsRoundData.totalScore <= 0)) {
+    const healAmount = myRoundData.result.heal;
+    const currentHP = game.opponentsCharacter.health;
+    const maxHP = game.opponentsCharacter.startingHealth;
+    if (currentHP < maxHP) {
+      lines.push(chalk.green(`    💚 Opponent regenerated ${healAmount} HP!`));
+    }
   }
 
   lines.push('');
@@ -750,17 +805,17 @@ async function startGame() {
 
     // Atmospheric introduction
     console.log(chalk.green('\n✓ Preparing for battle...\n'));
-    await delay(800);
+    await delay(300);
 
     await printCharByChar(chalk.dim(randomChoice(flavorText.locations)));
-    await delay(400);
+    await delay(150);
     console.log();
     await printCharByChar(chalk.yellow(randomChoice(flavorText.introductions[opponentSlug] || flavorText.introductions['human-fighter'])));
-    await delay(400);
+    await delay(150);
     await printCharByChar(chalk.bold.white(`\n${opponentData.name} challenges you to single combat!\n`));
-    await delay(400);
+    await delay(150);
     await printCharByChar(chalk.cyan(randomChoice(flavorText.ready)));
-    await delay(600);
+    await delay(200);
     console.log();
 
     // Initialize game
@@ -782,10 +837,10 @@ async function startGame() {
       const { myRoundData, opponentsRoundData } = e.detail;
       isProcessingRound = true;
       // Store bonuses for next round
-      currentBonus = opponentsRoundData.nextRoundBonus || [];
+      currentBonus = myRoundData.nextRoundBonus || [];
 
       await displayRoundResult(myRoundData, opponentsRoundData);
-      await delay(500);
+      await delay(150);
       isProcessingRound = false;
     });
 
