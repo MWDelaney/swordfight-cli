@@ -472,7 +472,9 @@ const suppressedPatterns = [
 
 const suppressedErrorPatterns = [
   /^Error in setup:.*Converting circular structure to JSON/s,
-  /TypeError: Converting circular structure to JSON/
+  /TypeError: Converting circular structure to JSON/,
+  /^Result not found$/,
+  /^Error in setup: TypeError: Cannot read properties of undefined \(reading 'range'\)/
 ];
 
 console.log = function(...args) {
@@ -684,7 +686,7 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
       lines.push(chalk.red(`  💔 Took ${opponentsRoundData.totalScore} damage from opponent`));
     } else if (opponentsRoundData.totalScore <= 0 && (opponentsRoundData.bonus !== 0 || opponentsRoundData.moveModifier !== 0)) {
       // Show when damage was reduced to 0 or less
-      lines.push(chalk.dim(`  🛡️  Attack reduced to ${opponentsRoundData.totalScore} damage `) + chalk.dim(formatDamageBreakdown(opponentsRoundData)));
+      lines.push(chalk.gray('  🛡️  Attack from opponent reduced to ') + chalk.gray(formatDamageBreakdown(opponentsRoundData)));
     }
   }
 
@@ -694,7 +696,7 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
       lines.push(chalk.green(`  💥 Dealt ${formatDamageBreakdown(myRoundData)} to opponent`));
     } else if (myRoundData.totalScore <= 0 && (myRoundData.bonus !== 0 || myRoundData.moveModifier !== 0)) {
       // Show when damage was reduced to 0 or less
-      lines.push(chalk.dim(`  🛡️  Attack reduced to ${myRoundData.totalScore} damage `) + chalk.dim(formatDamageBreakdown(myRoundData)));
+      lines.push(chalk.gray('  🛡️  Your attack reduced to ') + chalk.gray(formatDamageBreakdown(myRoundData)));
     }
   }
 
@@ -722,7 +724,7 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
       lines.push(chalk.red(`  💔 Took ${myRoundData.totalScore} damage from you`));
     } else if (myRoundData.totalScore <= 0 && (myRoundData.bonus !== 0 || myRoundData.moveModifier !== 0)) {
       // Show when damage was reduced to 0 or less
-      lines.push(chalk.gray(`  🛡️  Attack reduced to ${myRoundData.totalScore} damage `) + chalk.gray(formatDamageBreakdown(myRoundData)));
+      lines.push(chalk.gray('  🛡️  Attack from you reduced to ') + chalk.gray(formatDamageBreakdown(myRoundData)));
     }
   }
 
@@ -732,7 +734,7 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
       lines.push(chalk.green(`  💥 Dealt ${formatDamageBreakdown(opponentsRoundData)} to you`));
     } else if (opponentsRoundData.totalScore <= 0 && (opponentsRoundData.bonus !== 0 || opponentsRoundData.moveModifier !== 0)) {
       // Show when damage was reduced to 0 or less
-      lines.push(chalk.gray(`  🛡️  Attack reduced to ${opponentsRoundData.totalScore} damage `) + chalk.gray(formatDamageBreakdown(opponentsRoundData)));
+      lines.push(chalk.gray('  🛡️  Their attack reduced to ') + chalk.gray(formatDamageBreakdown(opponentsRoundData)));
     }
   }
 
