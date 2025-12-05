@@ -27,22 +27,39 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { Game, CharacterLoader } from 'swordfight-engine';
+import { DurableObjectTransport } from 'swordfight-engine/transports/DurableObjectTransport';
 import { createRequire } from 'module';
+
+// ============================================================================
+// CONFIGURATION & CONSTANTS
+// ============================================================================
 
 const require = createRequire(import.meta.url);
 const packageJson = require('../package.json');
+
+/** @constant {string} CLI_VERSION - Current CLI version from package.json */
 const CLI_VERSION = packageJson.version;
+
+/** @constant {string} ENGINE_VERSION - Game engine version */
 const ENGINE_VERSION = packageJson.dependencies['swordfight-engine'].replace('^', '');
+
+/** @constant {string} MULTIPLAYER_SERVER_URL - WebSocket server for multiplayer games */
+const MULTIPLAYER_SERVER_URL = process.env.SWORDFIGHT_SERVER_URL || 'wss://swordfight-multiplayer.michael-delaney.workers.dev';
+
+/** @constant {number} GAME_ID_LENGTH - Length of multiplayer game codes */
+const GAME_ID_LENGTH = 5;
+
+/** @constant {number} TYPING_DELAY - Milliseconds between lines for dramatic effect */
+const TYPING_DELAY = 50;
+
+/** @constant {number} CHAR_DELAY - Milliseconds between characters for dramatic typing */
+const CHAR_DELAY = 10;
 
 // ES module path utilities
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Constants
-/** @constant {number} TYPING_DELAY - Milliseconds between each line for dramatic effect */
-const TYPING_DELAY = 50;
-
-// Load narrative flavor text for atmospheric descriptions
+/** @constant {Object} flavorText - Narrative descriptions for atmospheric storytelling */
 const flavorText = JSON.parse(
   readFileSync(join(__dirname, 'flavor-text.json'), 'utf-8')
 );
@@ -77,9 +94,9 @@ async function printLineByLine(lines) {
 /**
  * Prints text character by character for maximum dramatic effect
  * @param {string} text - Text to print character by character
- * @param {number} charDelay - Delay in ms between each character (default: 10ms)
+ * @param {number} charDelay - Delay in ms between each character
  */
-async function printCharByChar(text, charDelay = 10) {
+async function printCharByChar(text, charDelay = CHAR_DELAY) {
   for (const char of text) {
     process.stdout.write(char);
     await delay(charDelay);
@@ -442,7 +459,10 @@ class CLIAdapter {
   }
 }
 
-// Setup global polyfills for the game engine
+// ============================================================================
+// GLOBAL POLYFILL SETUP
+// ============================================================================
+
 const adapter = new CLIAdapter();
 
 /** @global document - Polyfilled document object for game events */
@@ -452,7 +472,7 @@ global.document = adapter;
 global.localStorage = {
   storage: new Map(),
   getItem(key) { return this.storage.get(key) || null; },
-  setItem(_key, _value) { 
+  setItem(_key, _value) {
     // Silently ignore - we don't want to persist game state in CLI
     // The engine tries to save but we intentionally don't store it
   }
@@ -461,36 +481,50 @@ global.localStorage = {
 /** @global window - Minimal window object for game compatibility */
 global.window = { logging: false };
 
-// Suppress debug output from the game engine
+// ============================================================================
+// CONSOLE OUTPUT FILTERING
+// ============================================================================
+
+/**
+ * Suppress debug output from game engine that would clutter CLI display.
+ * These are internal engine messages that don't need to be shown to players.
+ */
 const originalConsoleLog = console.log;
 const originalConsoleError = console.error;
-const suppressedPatterns = [
+
+const ENGINE_LOG_PATTERNS = [
   /^Applied -?\d+ damage to .+\. New health: -?\d+$/,
   /^.+ takes \d+ damage$/,
   /^.+ health: -?\d+$/
 ];
 
-const suppressedErrorPatterns = [
+const ENGINE_ERROR_PATTERNS = [
   /^Error in setup:.*Converting circular structure to JSON/s,
   /TypeError: Converting circular structure to JSON/,
   /^Result not found$/,
   /^Error in setup: TypeError: Cannot read properties of undefined \(reading 'range'\)/
 ];
 
+/**
+ * Checks if a message matches any suppression pattern
+ * @param {string} message - The message to check
+ * @param {RegExp[]} patterns - Array of patterns to match against
+ * @returns {boolean} True if message should be suppressed
+ */
+function shouldSuppressOutput(message, patterns) {
+  return patterns.some(pattern => pattern.test(message));
+}
+
 console.log = function(...args) {
   const message = args.join(' ');
-  const shouldSuppress = suppressedPatterns.some(pattern => pattern.test(message));
-
-  if (!shouldSuppress) {
+  if (!shouldSuppressOutput(message, ENGINE_LOG_PATTERNS)) {
     originalConsoleLog.apply(console, args);
   }
 };
 
 console.error = function(...args) {
   const message = args.join(' ');
-  const shouldSuppress = suppressedErrorPatterns.some(pattern => pattern.test(message));
-
-  if (!shouldSuppress) {
+  if (!shouldSuppressOutput(message, ENGINE_ERROR_PATTERNS)) {
     originalConsoleError.apply(console, args);
   }
 };
@@ -521,6 +555,18 @@ let currentBonus = [];
 // ============================================================================
 
 /**
+ * Creates a visual health bar with colored blocks
+ * @param {number} current - Current health points
+ * @param {number} max - Maximum health points
+ * @returns {string} Colored health bar string (20 characters wide)
+ */
+function createHealthBar(current, max) {
+  const filled = Math.max(0, Math.floor((current / max) * 20));
+  const bar = '█'.repeat(filled) + '░'.repeat(20 - filled);
+  return current > max * 0.3 ? chalk.green(bar) : chalk.red(bar);
+}
+
+/**
  * Displays health bars and current status for both combatants
  * Shows names, health bars, HP values, and equipment status
  * @returns {Promise<void>} Promise that resolves when display is complete
@@ -528,18 +574,6 @@ let currentBonus = [];
 async function displayHealthBars() {
   const lines = [];
   const { myCharacter, opponentsCharacter } = game;
-
-  /**
-   * Creates a visual health bar with colored blocks
-   * @param {number} current - Current health points
-   * @param {number} max - Maximum health points
-   * @returns {string} Colored health bar string
-   */
-  const createHealthBar = (current, max) => {
-    const filled = Math.max(0, Math.floor((current / max) * 20));
-    const bar = '█'.repeat(filled) + '░'.repeat(20 - filled);
-    return current > max * 0.3 ? chalk.green(bar) : chalk.red(bar);
-  };
 
   lines.push(chalk.bold.cyan('┌─────────────────────────────────────────────────────────┐'));
   lines.push(chalk.bold.white('  Combatants'));
@@ -577,23 +611,17 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
 
   lines.push(chalk.bold.magenta(`\n═══ Round ${game.roundNumber} Results ═══\n`));
 
-  // Flavor text based on round outcome
+  // Select appropriate flavor text based on round outcome
   const playerHit = myRoundData.totalScore > 0;
   const opponentHit = opponentsRoundData.totalScore > 0;
-  const playerRestricted = opponentsRoundData.result.restrict?.length > 0;
-  const opponentRestricted = myRoundData.result.restrict?.length > 0;
-  const anyRestricted = playerRestricted || opponentRestricted;
+  const hasRestrictions = opponentsRoundData.result.restrict?.length > 0 ||
+                          myRoundData.result.restrict?.length > 0;
 
-  let flavorCategory;
-  if (!playerHit && !opponentHit) {
-    flavorCategory = anyRestricted ? 'bothMissRestricted' : 'bothMiss';
-  } else if (!playerHit && opponentHit) {
-    flavorCategory = anyRestricted ? 'playerMissOpponentHitsRestricted' : 'playerMissOpponentHits';
-  } else if (playerHit && !opponentHit) {
-    flavorCategory = anyRestricted ? 'playerHitsOpponentMissRestricted' : 'playerHitsOpponentMiss';
-  } else {
-    flavorCategory = anyRestricted ? 'bothHitRestricted' : 'bothHit';
-  }
+  // Determine flavor text category from hit/miss and restriction state
+  const hitPattern = `${playerHit ? 'playerHits' : 'playerMiss'}${opponentHit ? 'OpponentHits' : 'OpponentMiss'}`
+    .replace('playerMissOpponentMiss', 'bothMiss')
+    .replace('playerHitsOpponentHits', 'bothHit');
+  const flavorCategory = hasRestrictions ? `${hitPattern}Restricted` : hitPattern;
 
   lines.push(chalk.italic.white(randomChoice(flavorText.roundResults[flavorCategory])));
   lines.push('');
@@ -793,6 +821,76 @@ async function displayRoundResult(myRoundData, opponentsRoundData) {
 // ============================================================================
 
 /**
+ * Generates a random game ID for multiplayer games
+ * @returns {string} Random uppercase alphanumeric string
+ */
+function generateGameId() {
+  return Math.random().toString(36).slice(-GAME_ID_LENGTH).toUpperCase();
+}
+
+/**
+ * Prompts player to enter their name
+ * @returns {Promise<string>} Promise that resolves with player name
+ */
+async function promptForName() {
+  return new Promise((resolve) => {
+    console.log(chalk.bold.cyan('┌─────────────────────────────────────────────────────────┐'));
+    console.log(chalk.bold.white('  What is your name?'));
+    console.log(chalk.bold.cyan('└─────────────────────────────────────────────────────────┘'));
+    console.log();
+
+    rl.question(chalk.white('  Your name: '), (name) => {
+      console.log();
+      resolve(name.trim() || 'Warrior');
+    });
+  });
+}
+
+/**
+ * Prompts player to select game mode (computer or multiplayer)
+ * @returns {Promise<Object>} Promise that resolves with game mode and optional gameId
+ */
+async function selectGameMode() {
+  const modes = [
+    {
+      name: '🤖 Fight the Computer',
+      mode: 'computer',
+      description: 'Battle against an AI opponent'
+    },
+    {
+      name: '⚔️  Create Multiplayer Game',
+      mode: 'create',
+      description: 'Start a new game and invite a friend'
+    },
+    {
+      name: '🎮 Join Multiplayer Game',
+      mode: 'join',
+      description: 'Enter a game code to join an existing game'
+    }
+  ];
+
+  const selected = await selectFromMenu(modes, null, 'Choose Game Mode');
+  console.log();
+
+  if (selected.mode === 'create') {
+    const gameId = generateGameId();
+    console.log(chalk.green(`✓ Created game with code: ${chalk.bold.yellow(gameId)}`));
+    console.log(chalk.dim('  Share this code with your opponent'));
+    console.log();
+    return { mode: 'multiplayer', gameId };
+  } else if (selected.mode === 'join') {
+    return new Promise((resolve) => {
+      rl.question(chalk.white('  Enter game code: '), (code) => {
+        console.log();
+        resolve({ mode: 'multiplayer', gameId: code.trim().toUpperCase() });
+      });
+    });
+  }
+
+  return { mode: 'computer' };
+}
+
+/**
  * Prompts player to select their character
  * Displays all available characters with their stats and equipment
  * @returns {Promise<string>} Promise that resolves with selected character slug
@@ -825,6 +923,11 @@ async function promptForMove() {
   console.log();
   console.log(chalk.dim('Press Enter to choose your move...'));
 
+  // Ensure stdin is in the correct state for readline after any previous raw mode usage
+  if (process.stdin.isTTY) {
+    process.stdin.setRawMode(false);
+  }
+
   await new Promise((resolve) => {
     rl.question('', () => resolve());
   });
@@ -838,6 +941,129 @@ async function promptForMove() {
 }
 
 /**
+ * Sets up all game event handlers for combat flow
+ * Manages round processing, opponent introduction, turn setup, and end game screens
+ */
+function setupGameEventHandlers() {
+  const gameState = {
+    isProcessingRound: false,
+    gameEnded: false
+  };
+
+  // Round event - processes combat results and displays outcome
+  adapter.addEventListener('round', async(e) => {
+    const { myRoundData, opponentsRoundData } = e.detail;
+    gameState.isProcessingRound = true;
+    currentBonus = opponentsRoundData.nextRoundBonus || [];
+
+    await displayRoundResult(myRoundData, opponentsRoundData);
+    await delay(150);
+    gameState.isProcessingRound = false;
+  });
+
+  // Start event - called when game connection is established
+  adapter.addEventListener('start', async() => {
+    // Wait for character data to be fully loaded before setting up
+    // This matches what the web client does in _waitForCharactersToLoad
+    await new Promise((resolve) => {
+      const checkCharacters = () => {
+        const charactersReady = game.myCharacter &&
+                               game.opponentsCharacter &&
+                               game.myCharacter.moves &&
+                               game.opponentsCharacter.moves;
+        
+        if (charactersReady) {
+          resolve();
+        } else {
+          setTimeout(checkCharacters, 100);
+        }
+      };
+      checkCharacters();
+    });
+    
+    await game.setUp();
+  });
+
+  // Name event - receives and displays opponent information
+  adapter.addEventListener('name', async(e) => {
+    const { characterSlug } = e.detail;
+    const opponentData = await CharacterLoader.getCharacter(characterSlug);
+
+    // Display intro text but don't block the event loop
+    // This allows the setup event to fire while we're still printing
+    (async () => {
+      await printCharByChar(chalk.dim(randomChoice(flavorText.locations)));
+      await delay(150);
+      console.log();
+      await printCharByChar(chalk.yellow(randomChoice(flavorText.introductions[characterSlug] || flavorText.introductions['human-fighter'])));
+      await delay(150);
+      await printCharByChar(chalk.bold.white(`\n${opponentData.name} challenges you to single combat!\n`));
+      await delay(150);
+      await printCharByChar(chalk.cyan(randomChoice(flavorText.ready)));
+      await delay(200);
+      console.log();
+    })();
+  });
+
+  // Setup event - prepares for next turn and prompts for move
+  adapter.addEventListener('setup', async() => {
+    while (gameState.isProcessingRound) await delay(100);
+    if (gameState.gameEnded) return;
+    
+    currentMoves = game.Moves.filteredMoves;
+    currentBonus = game.Moves.bonus || [];
+    await promptForMove();
+  });  // Victory event - displays victory screen
+  adapter.addEventListener('victory', async() => {
+    await handleGameEnd(true, gameState);
+  });
+
+  // Defeat event - displays defeat screen
+  adapter.addEventListener('defeat', async() => {
+    await handleGameEnd(false, gameState);
+  });
+}
+
+/**
+ * Handles game end display (victory or defeat)
+ * @param {boolean} isVictory - True for victory, false for defeat
+ * @param {Object} gameState - Object containing isProcessingRound and gameEnded flags
+ */
+async function handleGameEnd(isVictory, gameState) {
+  gameState.gameEnded = true;
+  while (gameState.isProcessingRound) await delay(100);
+
+  console.log();
+  await delay(500);
+
+  if (isVictory) {
+    await printCharByChar(chalk.green(randomChoice(flavorText.victory)));
+    await delay(800);
+    console.log();
+    console.log(chalk.bold.green('╔════════════════════════════════════════════════════════════╗'));
+    console.log(chalk.bold.yellow('                    ⚔️  VICTORY! ⚔️                          '));
+    console.log(chalk.bold.green('╚════════════════════════════════════════════════════════════╝'));
+    console.log();
+    console.log(chalk.white(`  The ${game.opponentsCharacter.name} falls before you!`));
+    console.log(chalk.dim('  Your legend grows...'));
+  } else {
+    await printCharByChar(chalk.red(randomChoice(flavorText.defeat)));
+    await delay(800);
+    console.log();
+    console.log(chalk.bold.red('╔════════════════════════════════════════════════════════════╗'));
+    console.log(chalk.bold.white('                    💀 DEFEAT 💀                            '));
+    console.log(chalk.bold.red('╚════════════════════════════════════════════════════════════╝'));
+    console.log();
+    console.log(chalk.white(`  ${game.opponentsCharacter.name} has bested you in combat.`));
+    console.log(chalk.dim('  You have fallen...'));
+  }
+
+  console.log();
+  rl.close();
+  process.exit(0);
+}
+
+/**
  * Main game initialization and loop
  * Sets up character selection, opponent, narrative intro, game events,
  * and starts the turn-based combat loop
@@ -845,122 +1071,58 @@ async function promptForMove() {
  */
 async function startGame() {
   try {
-    const playerCharacter = await selectCharacter();
+    // Get player name
+    const playerName = await promptForName();
 
-    // Random opponent (exclude player's character)
-    const availableCharacterSlugs = CharacterLoader.getAvailableCharacters()
-      .filter(slug => slug !== playerCharacter);
-    const opponentSlug = availableCharacterSlugs[Math.floor(Math.random() * availableCharacterSlugs.length)];
-    const opponentData = await CharacterLoader.getCharacter(opponentSlug);
+    // Select game mode
+    const gameMode = await selectGameMode();
+
+    // Select character
+    const playerCharacter = await selectCharacter();
 
     // Atmospheric introduction
     console.log(chalk.green('\n✓ Preparing for battle...\n'));
     await delay(300);
 
-    await printCharByChar(chalk.dim(randomChoice(flavorText.locations)));
-    await delay(150);
-    console.log();
-    await printCharByChar(chalk.yellow(randomChoice(flavorText.introductions[opponentSlug] || flavorText.introductions['human-fighter'])));
-    await delay(150);
-    await printCharByChar(chalk.bold.white(`\n${opponentData.name} challenges you to single combat!\n`));
-    await delay(150);
-    await printCharByChar(chalk.cyan(randomChoice(flavorText.ready)));
-    await delay(200);
-    console.log();
-
-    // Initialize game
-    game = new Game('computer', playerCharacter, opponentSlug);
-
-    // Clear localStorage after game creation to ensure fresh game each time
-    // This prevents the engine from loading saved game state
+    // Clear localStorage to ensure fresh game each time
     global.localStorage.storage.clear();
 
-    // Event handlers for game state changes
-    let isProcessingRound = false;
-    let gameEnded = false;
+    // Determine game ID
+    const gameId = gameMode.mode === 'computer' ? 'computer' : gameMode.gameId;
 
-    /**
-     * Handler for 'round' event - processes combat round results
-     * Updates bonus state and displays round results
-     */
-    adapter.addEventListener('round', async(e) => {
-      const { myRoundData, opponentsRoundData } = e.detail;
-      isProcessingRound = true;
-      // Store bonuses for next round (opponentsRoundData contains bonuses applied to YOU)
-      currentBonus = opponentsRoundData.nextRoundBonus || [];
+    // Initialize game with new async pattern
+    // 1. Create game with player's character
+    game = new Game(gameId, playerCharacter);
 
-      await displayRoundResult(myRoundData, opponentsRoundData);
-      await delay(150);
-      isProcessingRound = false;
-    });
+    // 2. Initialize (loads player character data)
+    await game.initialize();
 
-    /**
-     * Handler for 'setup' event - prepares for next turn
-     * Waits for round processing to complete, then prompts for move
-     */
-    adapter.addEventListener('setup', async() => {
-      while (isProcessingRound) {
-        await delay(100);
-      }
-      if (gameEnded) {
-        return;
-      }
-      // game.Moves.filteredMoves is the array of filtered moves based on current game state
-      currentMoves = game.Moves.filteredMoves;
-      await promptForMove();
-    });
+    // Set player name
+    if (game.myCharacter) {
+      game.myCharacter.name = playerName;
+    }
 
-    /**
-     * Handler for 'victory' event - displays victory screen and exits
-     */
-    adapter.addEventListener('victory', async() => {
-      gameEnded = true;
-      while (isProcessingRound) {
-        await delay(100);
-      }
-      console.log();
-      await delay(500);
-      await printCharByChar(chalk.green(randomChoice(flavorText.victory)));
-      await delay(800);
-      console.log();
-      console.log(chalk.bold.green('╔════════════════════════════════════════════════════════════╗'));
-      console.log(chalk.bold.yellow('                    ⚔️  VICTORY! ⚔️                          '));
-      console.log(chalk.bold.green('╚════════════════════════════════════════════════════════════╝'));
-      console.log();
-      console.log(chalk.white(`  The ${game.opponentsCharacter.name} falls before you!`));
-      console.log(chalk.dim('  Your legend grows...'));
-      console.log();
-      rl.close();
-      process.exit(0);
-    });
+    // Setup game event handlers
+    setupGameEventHandlers();
 
-    /**
-     * Handler for 'defeat' event - displays defeat screen and exits
-     */
-    adapter.addEventListener('defeat', async() => {
-      gameEnded = true;
-      while (isProcessingRound) {
-        await delay(100);
-      }
+    // 3. Connect with appropriate transport
+    if (gameMode.mode === 'computer') {
+      // Computer mode - no transport parameter needed
+      await game.connect();
+    } else {
+      // Multiplayer mode - create and connect DurableObjectTransport
+      console.log(chalk.yellow('⏳ Waiting for opponent to join...'));
+      console.log(chalk.dim(`   Game code: ${chalk.bold(gameId)}`));
       console.log();
-      await delay(500);
-      await printCharByChar(chalk.red(randomChoice(flavorText.defeat)));
-      await delay(800);
-      console.log();
-      console.log(chalk.bold.red('╔════════════════════════════════════════════════════════════╗'));
-      console.log(chalk.bold.white('                    💀 DEFEAT 💀                            '));
-      console.log(chalk.bold.red('╚════════════════════════════════════════════════════════════╝'));
-      console.log();
-      console.log(chalk.white(`  ${game.opponentsCharacter.name} has bested you in combat.`));
-      console.log(chalk.dim('  You have fallen...'));
-      console.log();
-      rl.close();
-      process.exit(0);
-    });
 
-    // Brief delay before starting first turn
-    await delay(500);
-    game.setUp();
+      const transport = new DurableObjectTransport(game, {
+        serverUrl: MULTIPLAYER_SERVER_URL
+      });
+      await game.connect(transport);
+      
+      // In multiplayer, the first move prompt will be triggered by the name event handler
+      // after opponent data is received and game is fully initialized
+    }
 
   } catch (error) {
     console.error(chalk.red('Error starting game:'), error);
